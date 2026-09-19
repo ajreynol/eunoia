@@ -1,6 +1,6 @@
-# Start here if you want to add a rule to Cpc.eo in cvc5
+# Adding a rule to `Cpc.eo` in cvc5
 
-Part of the [Eunoia tutorials](tutorials.md).
+Part of [Mimesis](../README.md)'s tutorials.
 
 Adding a CPC rule means updating **both cvc5 and Logos**. In cvc5 you describe
 which proof steps the rule accepts. In Logos you regenerate that description

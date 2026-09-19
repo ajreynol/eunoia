@@ -2,37 +2,55 @@
 
 **Where to learn how to write Eunoia and maintain its verification in Logos.**
 A child project of [eunoia](../../README.md), the repository for language
-research, in two strands:
-
-- **Case studies** read an episode that already happened — a signature somebody
-  wrote, and whatever answered back: a stated proof obligation, a generated
-  checker, a producer's own checker, a test suite. Each says what was decided,
-  what was got wrong, and what caught it. The supply is real history: 75 commits
-  touched CPC's signature on cvc5's trunk in the twelve months to 2026-09-16.
-- **Tutorials** cover different jobs: adding a CPC rule, adding an operator to a
-  theory CPC already has, extending CPC with a whole theory, or defining a new
-  calculus's signature. Main CPC changes continue through Logos; expert additions
-  end with their CPC declarations and checks. Worked files are kept, and each
-  tutorial distinguishes what was run from instructions for the reader's own
-  change.
+research, in two strands: tutorials for the job you are doing, and case studies
+of episodes that already happened.
 
 Mimesis provides optional advice and examples. Creating a Eunoia signature,
 generating a checker, and verifying rules in Logos require no Mimesis checkout
 or tooling; the tutorials describe those projects' workflows.
 
-**[Choose a tutorial](docs/tutorials.md).** If you are changing cvc5, start with
-**[adding a rule to `Cpc.eo`](docs/adding-a-cpc-rule.md)**. Updating and proving
-the rule in Logos is part of that job.
+## Tutorials
 
-| document | strand | what it is |
+One per job. **If you are changing cvc5, start with [adding a rule to
+`Cpc.eo`](docs/adding-a-cpc-rule.md)** — updating and proving the rule in Logos
+is part of that job. Main CPC changes continue through Logos; expert additions
+end with their CPC declarations and checks. Worked files are kept with each
+tutorial, and every one distinguishes what was run from instructions for the
+reader's own change.
+
+| the job | tutorial | what you work on |
 | --- | --- | --- |
-| [`docs/adding-a-cpc-rule.md`](docs/adding-a-cpc-rule.md) | tutorial | **Start here if you want to add a rule to Cpc.eo in cvc5.** Signature, proof tests, Logos regeneration and Lean proof, then the cvc5 pin and CI |
-| [`docs/case-study.md`](docs/case-study.md) | case study | **BV abstraction.** One CPC rule from a paper's lemma schemes into a Eunoia signature, into Logos as 11,168 lines of Lean — where stating the obligation exposed it as unsound — then fixed, proved, and simplified, with the proof shrinking twenty lines for every line the signature lost |
-| [`docs/defining-a-calculus.md`](docs/defining-a-calculus.md) | tutorial | **Defining a calculus: propositional resolution.** Write a signature from scratch, with worked proof tests |
-| [`docs/extending-cpc-operators.md`](docs/extending-cpc-operators.md) | tutorial | **Extending CPC with a new theory operator.** One operator over existing sorts, followed end to end: `int.pow2`'s declaration, its evaluator, cvc5's printed name, and the Lean lemma that justifies what it computes |
-| [`docs/extending-cpc-theories.md`](docs/extending-cpc-theories.md) | tutorial | **Extending CPC theories.** A sort, its values and operators, taken from cvc5's expert finite fields: the main-or-expert decision, cvc5's proof output, the safe-mode gate, and what a main theory owes Logos |
-| [`docs/tutorials.md`](docs/tutorials.md) | tutorial | **The router.** One row per job — add a rule, define a calculus, add an operator, add a theory — and which tutorial each starts in. It is the index of that strand, not a tutorial itself |
-| [`docs/upstream-draft.md`](docs/upstream-draft.md) | draft | **cvc5's CPC output documentation.** Four things a contributor changing the signature has to find elsewhere, written as a draft for a person to take upstream; nothing in it was sent to cvc5 |
+| Add a proof rule to cvc5's CPC signature | [**Adding a rule to `Cpc.eo`**](docs/adding-a-cpc-rule.md) | The rule's interface and its proof tests, its generated Lean and soundness proof in Logos, then the cvc5 pin and CI |
+| Add an operator to a theory CPC already has | [**Extending CPC with a new theory operator**](docs/extending-cpc-operators.md) | One declaration, the program that computes it, cvc5's printed name, and the Lean lemma that justifies what it computes — `int.pow2`, end to end |
+| Add a whole theory to CPC | [**Extending CPC theories**](docs/extending-cpc-theories.md) | A sort, its values and operators, the main-or-expert decision, cvc5's proof output, the safe-mode gate, and what a main theory owes Logos — cvc5's expert finite fields |
+| Define a proof calculus of your own | [**Defining a calculus: propositional resolution**](docs/defining-a-calculus.md) | A signature written from scratch: terms, premises, arguments, computed conclusions, side conditions, and worked proof tests |
+
+## Case studies
+
+A case study reads an episode that already happened — a signature somebody
+wrote, and whatever answered back: a stated proof obligation, a generated
+checker, a producer's own checker, a test suite. Each says what was decided,
+what was got wrong, and what caught it.
+
+| case study | the episode | what it shows |
+| --- | --- | --- |
+| [**BV abstraction**](docs/case-study.md) | One CPC rule, from a paper's lemma schemes into a Eunoia signature and into Logos as 11,168 lines of Lean | Stating the obligation exposed the rule as unsound — then the fix, the proof, and the simplification that followed, with the proof shrinking twenty lines for every line the signature lost |
+
+**One so far**, and accumulating them is this project's main goal. The supply is
+real history: 75 commits touched CPC's signature on cvc5's trunk in the twelve
+months to 2026-09-16.
+
+## The upstream draft
+
+[`docs/upstream-draft.md`](docs/upstream-draft.md) belongs to neither strand.
+Writing the CPC tutorials meant reconstructing four things from cvc5's sources
+that a contributor **changing** the signature would expect to find on cvc5's own
+CPC documentation page: what a change to CPC's vocabulary owes Logos, what
+actually makes a feature unavailable in safe mode, which signatures the
+generated checker script loads, and the `; disclaimer:` convention that marks
+departures from SMT-LIB. Each is written up with the sources quoted, the
+revisions recorded, and a suggested wording — a draft for a person to take
+upstream if they agree with it. Nothing in it was sent to cvc5.
 
 ## What each strand owes
 
@@ -52,7 +70,7 @@ through the repository that carries it, and the repository that carries this
 one keeps no `docs/discussion.md` at all. Where there is no discussion file
 there is no wire, in either direction, and what is said is carried by a person.
 
-**Both are additive.** The Eunoia [manual][manual] is the authority on the
+**All three are additive.** The Eunoia [manual][manual] is the authority on the
 language, the [signature contract][contract] of [eudaimonia][eudaimonia] — the
 checker-build framework, *the framework* wherever a ledger row below says it —
 on what a signature must provide, and the compiler's output on what a signature

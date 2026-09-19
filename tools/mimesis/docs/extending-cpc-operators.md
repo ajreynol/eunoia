@@ -1,6 +1,6 @@
 # Extending CPC with a new theory operator
 
-Part of the [Eunoia tutorials](tutorials.md).
+Part of [Mimesis](../README.md)'s tutorials.
 
 The smallest complete change to cvc5's proof calculus is one new operator over
 sorts that already exist: a name, a type, a way to compute it, and a meaning.

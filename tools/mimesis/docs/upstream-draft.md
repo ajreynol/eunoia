@@ -1,18 +1,20 @@
 # Upstream draft: cvc5's CPC output documentation
 
-**Not a correspondence channel.** A child project opens no topics and answers
-none, and this file is not `docs/discussion.md` in the sense the ecosystem's
-repository policy gives that name: it carries no topic, no id and no response
-gate, because it is not a wire to anybody. There is no discussion file anywhere
-in this tree, so there is no wire here to mistake it for.
+**Four suggested additions to a page this project does not own.** Writing [the
+CPC tutorials](../README.md#tutorials) meant reconstructing things from cvc5's
+sources that a contributor **changing** the signature, rather than consuming
+proofs, would expect to find on cvc5's own documentation of CPC proof output.
+Each is written up below with the sources quoted and a suggested wording, for a
+person to take upstream if they agree with it. Filling those gaps while the
+tutorials were being written is the only reason this file exists.
 
-A draft for a person to take upstream, if they agree with it. Nothing here is a
-defect report and nothing here was sent to cvc5: the page below is accurate
-about everything it says, and the remarks are about what a contributor who is
-**changing** the signature, rather than consuming proofs, still has to find
-elsewhere. They are the gaps that
-[the CPC tutorials](tutorials.md) had to fill from sources while they were
-being written, which is the only reason this file exists.
+**Nothing here was sent to cvc5, and nothing here is a defect report.** The
+page is accurate about everything it says; what follows are gaps, not errors.
+And it is not a correspondence channel: a child project opens no topics and
+answers none, so this file is not `docs/discussion.md` in the sense the
+ecosystem's repository policy gives that name — it carries no topic, no id and
+no response gate, because it is not a wire to anybody. There is no discussion
+file anywhere in this tree.
 
 The page is **[Proof format: Cooperating Proof Calculus][page]**, with its
 subsections *Checking with Logos*, *Keeping CPC and Logos in sync* and

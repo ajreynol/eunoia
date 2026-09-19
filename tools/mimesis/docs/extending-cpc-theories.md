@@ -1,6 +1,6 @@
 # Extending CPC theories
 
-Part of the [Eunoia tutorials](tutorials.md).
+Part of [Mimesis](../README.md)'s tutorials.
 
 A theory is five things: a sort, the values of that sort, the operators over it,
 the proof support that reasons about them, and a decision about whether cvc5 may

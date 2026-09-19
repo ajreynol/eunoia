@@ -15,7 +15,7 @@ this repository keeps a project for each.
 | project | the question it asks | start at |
 | --- | --- | --- |
 | [**sapheneia**](tools/sapheneia/README.md) | *What is Eunoia, as a language, independently of any checker?* A description written as a language definition, with implementation behaviour quarantined and labelled rather than mixed in | [the account](tools/sapheneia/docs/manual.md) |
-| [**mimesis**](tools/mimesis/README.md) | *How is a Eunoia signature written, and how does it stay verified?* Case studies of episodes that already happened, and tutorials for the jobs an author actually has | [choose a tutorial](tools/mimesis/docs/tutorials.md) |
+| [**mimesis**](tools/mimesis/README.md) | *How is a Eunoia signature written, and how does it stay verified?* Case studies of episodes that already happened, and tutorials for the jobs an author actually has | [choose a tutorial](tools/mimesis/README.md#tutorials) |
 
 The two read the same manual for opposite purposes — one has to say what the
 language *requires*, the other what to *type* — and each keeps a ledger of what

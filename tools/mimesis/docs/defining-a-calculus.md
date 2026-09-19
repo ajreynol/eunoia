@@ -1,6 +1,6 @@
 # Defining a calculus: propositional resolution
 
-Part of the [Eunoia tutorials](tutorials.md). This is the route for writing a
+Part of [Mimesis](../README.md)'s tutorials. This is the route for writing a
 signature from scratch. To extend cvc5's existing calculus, start with
 [adding a CPC rule](adding-a-cpc-rule.md), including its verification in Logos.
 
