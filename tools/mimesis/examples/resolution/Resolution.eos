@@ -10,7 +10,7 @@
 ; NOT COMPILED HERE. See ../../docs/defining-a-calculus.md, "What was checked
 ; and what was not": the tutorial's proof tests were run with `ethos`, which
 ; reads the signature and never this file. This file is written in the form of
-; eudaimonia's own `examples/hello/Hello.eos`, with `or` added.
+; eudaimonia's own `new_checker/examples/hello/Hello.eos`, with `or` added.
 
 (define-symbol not (x))
 
@@ -22,7 +22,8 @@
 ; datatype names are reserved, even for a calculus with no datatypes, so a
 ; signature that has none still has to answer. `:keep` is what says the block
 ; stands regardless of what the input declares. Copied from eudaimonia's
-; `examples/hello/Hello.eos`, where the same block appears for the same reason.
+; `new_checker/examples/hello/Hello.eos`, where the same block appears for the
+; same reason.
 (program $eo_to_smt_reserved_datatype_name ((s "String"))
   :keep
   :signature ("String") "Bool"

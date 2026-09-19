@@ -252,9 +252,9 @@ the output — `check.sh` does.
 compiled here. `ethos` reads the signature and never the semantics; compiling
 it needs `ethos-eoc`, and the build available in this environment is newer than
 eudaimonia's pinned compiler and rejects eudaimonia's own
-`examples/hello/Hello.eos` in the same way it rejects this file. The file is
-therefore written to match that shipped example exactly in form, with `or`
-added, and is labelled unverified in its own header.
+`new_checker/examples/hello/Hello.eos` in the same way it rejects this file.
+The file is therefore written to match that shipped example exactly in form,
+with `or` added, and is labelled unverified in its own header.
 
 **Not checked: everything downstream of that.** No checker was generated, no
 Lean was built, and no soundness obligation was stated — so nothing here says
@@ -266,18 +266,22 @@ MIMESIS=/absolute/path/to/eunoia/tools/mimesis
 EUDAIMONIA=/absolute/path/to/eudaimonia
 
 mkdir /tmp/res-spec
-cp "$MIMESIS/examples/resolution/Resolution.eo"  /tmp/res-spec/
-cp "$MIMESIS/examples/resolution/Resolution.eos" /tmp/res-spec/
-cp "$MIMESIS/examples/resolution/profile"        /tmp/res-spec/
-cp "$EUDAIMONIA/examples/hello/smt.eos"          /tmp/res-spec/   # unchanged
-cd "$EUDAIMONIA" && scripts/new-checker.sh \
-  --checker Demo --calculus Resolution --spec /tmp/res-spec
+cp "$MIMESIS/examples/resolution/Resolution.eo"     /tmp/res-spec/
+cp "$MIMESIS/examples/resolution/Resolution.eos"    /tmp/res-spec/
+cp "$MIMESIS/examples/resolution/profile"           /tmp/res-spec/
+cp "$EUDAIMONIA/new_checker/examples/hello/smt.eos" /tmp/res-spec/   # unchanged
+"$EUDAIMONIA/new_checker/new-checker.sh" \
+  --checker Demo --calculus Resolution --spec /tmp/res-spec \
+  --out /tmp/res-checker
 ```
 
-The generator is eudaimonia's and runs in eudaimonia's tree; only the spec
-directory comes from here. Those commands were **not** run here, and the spec
-directory is assembled outside this repository because a child project writes
-only inside its own directory.
+The generator is eudaimonia's and lives in that tree; only the spec directory
+comes from here, and `--out` puts the generated project in neither repository —
+without it the project is written under eudaimonia's `new_checker/checkers/`.
+eudaimonia's `scripts/new-checker.sh` still forwards to the same generator, so
+an older bookmark is not broken. Those commands were **not** run here, and the
+spec directory is assembled outside this repository because a child project
+writes only inside its own directory.
 
 ## What it cost, for the ledger
 
