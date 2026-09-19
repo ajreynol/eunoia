@@ -5,6 +5,10 @@ what the work would have to be, what already exists to build on, and what
 currently blocks it — so that the next person to look at it starts from a
 position rather than from a blank page.*
 
+For Eunoia semantics (`.eos`) configuration files, see the maintained
+[language reference](eos.md). This page concerns the separate research goal of
+formalizing Eunoia itself.
+
 ## What this means, and what it does not
 
 **Would be:** judgement forms and inference rules for Eunoia itself, at the

@@ -571,9 +571,9 @@ divergence would overstate the ledger.
   that anywhere is a person's job, under the reporting discipline of the project
   that receives it, and nothing here has been carried anywhere.
 - **It does not describe `.eos`.** The semantics-set language has its own
-  reference (`tools/eoc/semantics/README.md` in the ethos tree). Rows cite a set
-  where the set is the evidence; the language is out of scope, as it is for
-  [`manual.md`](manual.md).
+  [reference maintained by Sapheneia](eos.md). Rows cite a set where the set is
+  the evidence; the language definition belongs in that reference, separately
+  from this comparison and [`manual.md`](manual.md).
 - **It does not compare soundness.** logos proves things about its own checker
   against its own SMT-LIB semantics. Whether that semantics conforms to SMT-LIB
   is [`logos/docs/smt-lib-conformance.md`](https://github.com/cvc5/logos/blob/main/docs/smt-lib-conformance.md),

@@ -4,6 +4,7 @@ The [charter](../README.md) is the project's entry point.
 
 | file | what it is |
 | --- | --- |
+| [`eos.md`](eos.md) | the maintained definition of Eunoia semantics (`.eos`) configuration files, imported from Ethos's compiler reference |
 | [`manual.md`](manual.md) | the account. Goal 1 |
 | [`feedback.md`](feedback.md) | candidate feedback to the ethos manual, as a ledger. Goal 2 |
 | [`semantics.md`](semantics.md) | the formalization: shape, judgement forms, blockers. Goal 3, wishue |

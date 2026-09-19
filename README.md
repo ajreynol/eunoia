@@ -4,7 +4,8 @@
 tree, and where the difference matters below the capital says which. Why they
 share a word is [the name](#the-name).*
 
-**This is where Eunoia is studied: what the language is, and how it is written.**
+**This is where Eunoia is studied and its semantics configuration language is
+maintained: what the languages are, and how they are written.**
 Eunoia is the logical framework and language the [Ethos][ethos] checker reads
 natively — calculi are defined in it and solver proofs are checked against those
 definitions. Understanding it and authoring in it are two different jobs, and
@@ -12,7 +13,7 @@ this repository keeps a project for each.
 
 | project | the question it asks | start at |
 | --- | --- | --- |
-| [**sapheneia**](tools/sapheneia/README.md) | *What is Eunoia, as a language, independently of any checker?* A description written as a language definition, with implementation behaviour quarantined and labelled rather than mixed in | [the account](tools/sapheneia/docs/manual.md) |
+| [**sapheneia**](tools/sapheneia/README.md) | *What is Eunoia, as a language, independently of any checker?* The language account, and the maintained definition of Eunoia semantics (`.eos`) configuration files | [the account](tools/sapheneia/docs/manual.md); [the `.eos` reference](tools/sapheneia/docs/eos.md) |
 | [**mimesis**](tools/mimesis/README.md) | *How is a Eunoia signature written, and how does it stay verified?* Case studies of episodes that already happened, and tutorials for the jobs an author actually has | [choose a tutorial](tools/mimesis/README.md#tutorials) |
 
 The two read the same manual for opposite purposes — one has to say what the
@@ -30,13 +31,19 @@ talks about — [ethos][ethos], [cvc5][cvc5], [logos][logos] and the Eunoia
 compiler — live in their own repositories, are named where they are used, and
 are pinned to a commit where a claim depends on one.
 
-**Nothing here is authoritative.** ethos's [`user_manual.md`][manual] is the
-authority on Eunoia: it governs, which is not the same as being presumed
-correct. Everything written here is a second reading a person may consult and
-check the first against. Where the two disagree either may be at fault, and the
+**The `.eo` account is a second reading.** ethos's
+[`user_manual.md`][manual] remains the authority on Eunoia itself. Where that
+manual and the account here disagree either may be at fault, and the
 disagreement goes into a ledger rather than into a correction of the manual.
 
-**Nothing here proposes changes to the language.** Where Eunoia is
+**Sapheneia maintains the `.eos` definition.** Its
+[`Eunoia semantics` reference](tools/sapheneia/docs/eos.md) is the authoritative
+definition maintained here for those configuration files. It was copied from
+Ethos's Eunoia compiler documentation on 2026-09-19, with its source revision
+recorded. Corrections and future definition updates belong there; the compiler
+implementation and individual semantics sets remain with their own projects.
+
+**The `.eo` account does not propose language changes.** Where Eunoia is
 underspecified, the work here says where and stops. Proposing the resolution is
 a change to Eunoia and belongs with the language's maintainers.
 
@@ -61,7 +68,7 @@ tools/mimesis/examples/resolution/check.sh path/to/ethos
 ```
 
 Each example's README says what its script checks and what it does not. No
-project here is a dependency of anything: writing a Eunoia signature, generating
+project here is a build dependency: writing a Eunoia signature, generating
 a checker and proving rules in Lean all happen without a checkout of this tree.
 
 ## The name

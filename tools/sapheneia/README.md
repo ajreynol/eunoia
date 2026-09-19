@@ -4,28 +4,36 @@
 of style with it: `ὡρίσθω λέξεως ἀρετὴ σαφῆ εἶναι`, let the virtue of style be
 defined as being clear (Rhetoric III.2). It is the right word because it names a
 property of the **account**, not of the thing accounted for. Eunoia is not
-unclear. The description of it can be clearer, and that is the whole of what
-this project is for.*
+unclear. The description of it can be clearer, and that is what this project
+works on, alongside maintaining the definition of its semantics configuration
+language.*
 
-A research project under the ecosystem's shared
+**Sapheneia maintains the definition of Eunoia semantics (`*.eos`)
+configuration files**, in [`docs/eos.md`](docs/eos.md), and studies Eunoia
+itself through the accounts below.
+
+A language documentation project under the ecosystem's shared
 [`policy.md`](https://github.com/ajreynol/kanon/blob/main/docs/policy.md),
-which kanon maintains. Started by a human, read-only, advertised in ecosystem
-listings, and not part of what the repository carrying it ships. Deleting this
-directory changes nothing anywhere else.
+which kanon maintains. Started by a human and advertised in ecosystem listings.
+It maintains documents; the compiler and semantics sets live in their own
+projects.
 
-**One named exception.** In one respect this project is **not an island**:
+**Named exceptions.** In one respect this project is **not an island**:
 eunoia's front page names and advertises it, a link inward that a reader meets
 before this page. That is the parent's choice, recorded here so that it is a
 named exception rather than drift. What has been delivered is the account, the
 two-readings comparison, the disagreement register and the feedback ledger —
 none of it carried upstream. The promotion decision is therefore open, and it
-is the human maintainer's.
+is the human maintainer's. On 2026-09-19 the human maintainer also assigned
+Sapheneia ownership of the `.eos` definition. That reference is authoritative
+within this remit, an explicit exception to the usual additive-only role of a
+child project; the `.eo` research accounts keep their existing status.
 
 ## The question
 
 **What is Eunoia, as a language, independently of any checker?**
 
-There is one description of Eunoia: `user_manual.md` in the ethos repository. It
+For Eunoia itself (`.eo`), the source is `user_manual.md` in the ethos repository. It
 is a good document and it is the authority. It is also, by construction, a
 manual for a *program* — it opens with how to build the executable, its
 normative sentences are about what Ethos does, and the boundary between *the
@@ -35,7 +43,23 @@ drawn anywhere, because a manual for one implementation has no reason to draw it
 That boundary is exactly what a second implementation, a formal semantics, or an
 analyzer needs, and it is what this project tries to supply.
 
-## Goals, in order
+## Maintaining Eunoia semantics (`.eos`)
+
+[`docs/eos.md`](docs/eos.md) is the maintained definition of the configuration
+language read by `ethos-eoc`: its syntax, the meaning of its forms and
+attributes, and the interpretation of their bodies. It includes compiler
+checks, examples and diagnostics so authors can use the definition.
+
+The reference was copied from `tools/eoc/docs/semantics.md` in Ethos on
+2026-09-19; its provenance and implementation baseline are recorded on the
+page. Maintain corrections and definition updates here, and identify the
+compiler revision behind implementation-specific claims when updating them.
+The Ethos document remains at its original location; there is no automatic
+synchronization between the two. This responsibility covers the `.eos`
+language, while each project maintains its own semantics sets and compiler
+code.
+
+## Research goals, in order
 
 1. **The account.** A description of Eunoia written as a language definition:
    ethos-agnostic, with implementation behaviour quarantined and labelled rather
@@ -86,14 +110,14 @@ The boundary matters more than the goals, so it is stated first-class.
   this account says so and stops. Proposing the resolution is a change to
   Eunoia, which belongs in a person's report to the language's maintainers,
   not in a description of the language as it stands.
-- **It does not describe `.eos`.** The semantics-set language read by
-  `ethos-eoc` is a second language with its own reference, and folding it in
-  would double the scope before the first goal is met. Candidate for later; out
-  of scope now.
-- **It does not describe how to run, build, install or configure a checker.**
-  Command-line options, build flags and streaming behaviour are properties of a
-  program. They are cut, not relocated.
-- **It is not a specification, and does not claim to be.** The ethos manual is
+- **It does not maintain the compiler or individual semantics sets.** It
+  maintains the `.eos` language definition; executable implementations and the
+  meanings assigned to a particular calculus's symbols stay with their owners.
+- **It does not provide a checker's build or installation manual.** The `.eo`
+  account omits command-line options, build flags and streaming behaviour. The
+  `.eos` reference retains compiler usage and diagnostics that explain how a
+  configuration is interpreted.
+- **The `.eo` account is not a specification.** The ethos manual is
   the authority, in the sense that it governs and this does not — which is not
   the same as being presumed correct. This is a second account a reader may
   consult and check the first against: additive, never authoritative. Where the two disagree, either may be at fault; the disagreement goes
@@ -149,6 +173,11 @@ convention.
 [`docs/README.md`](docs/README.md) indexes this project's documents.
 
 ## Status
+
+**The `.eos` reference, adopted 2026-09-19.** Copied from Ethos's compiler
+documentation and maintained here by the human maintainer's assignment.
+[`docs/eos.md`](docs/eos.md) records the source revision and the scope of the
+import. This replaces the former charter exclusion of `.eos`.
 
 **First cut, drafted 2026-08-31.** Read against `user_manual.md` at `ethosEoc3`
 (`3cf1c03`). Every chapter exists; the ones on desugaring, evaluation and the
