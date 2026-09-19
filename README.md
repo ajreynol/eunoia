@@ -109,12 +109,12 @@ still is the obligations and not the implementation: a build here can turn red
 with nothing committed, and when it does, a violation already in this tree has
 started being reported.
 
-**Written by AI agents under light supervision.** The human maintainer is
-`ajreynol` — Andrew Reynolds, University of Iowa and AWS — who is the authority
-over this repository and the answer to *who do I take this up with*. An agent
-holds no footing and makes no decision here: starting a project under `tools/`,
-changing what one is chartered to do, ending one, and carrying anything to
-another repository are all a person's.
+**Written by AI agents under light supervision.** The human maintainer,
+`ajreynol`, is the authority over this repository and the answer to *who do I
+take this up with*; the ecosystem's owner record is kanon's and is kept there
+rather than advertised here. An agent holds no footing and makes no decision
+here: starting a project under `tools/`, changing what one is chartered to do,
+ending one, and carrying anything to another repository are all a person's.
 
 [ethos]: https://github.com/cvc5/ethos
 [manual]: https://github.com/cvc5/ethos/blob/main/user_manual.md
