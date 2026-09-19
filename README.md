@@ -1,10 +1,8 @@
 # eunoia
 
-*εὔνοια — goodwill, and literally "well-minded": the disposition to read
-something in the best sense it will bear. The language took the word first and
-this repository takes it from the language, because the language is the whole of
-its subject. Where the two need telling apart below, **Eunoia** is the language
-and **eunoia** is this tree.*
+*One word, two spellings: **Eunoia** is the language and **eunoia** is this
+tree, and where the difference matters below the capital says which. Why they
+share a word is [the name](#the-name).*
 
 **This is where Eunoia is studied: what the language is, and how it is written.**
 Eunoia is the logical framework and language the [Ethos][ethos] checker reads
@@ -65,6 +63,19 @@ tools/mimesis/examples/resolution/check.sh path/to/ethos
 Each example's README says what its script checks and what it does not. No
 project here is a dependency of anything: writing a Eunoia signature, generating
 a checker and proving rules in Lean all happen without a checkout of this tree.
+
+## The name
+
+*εὔνοια* — goodwill, and literally "well-minded": the disposition to read
+something in the best sense it will bear. The language took the word first and
+this repository takes it from the language, because the language is the whole of
+its subject.
+
+The word also describes the work rather than only the subject. A second account
+of somebody else's manual earns its place only if it reads the first in the best
+sense it will bear, and the test of that is what happens on a disagreement: what
+this tree produces is a ledger row saying where the two part, not a correction
+to the document that governs.
 
 ## The ecosystem
 

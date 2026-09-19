@@ -1,6 +1,6 @@
 ; Resolution: propositional resolution over clauses.
 ;
-; Written in tools/mimesis/docs/defining-a-calculus.md, one decision at a time.
+; Written in tools/mimesis/tutorials/defining-a-calculus.md, one decision at a time.
 ; This file is the end state of that walk-through, and every claim the
 ; tutorial makes about it was checked by running ethos over test/.
 
@@ -23,7 +23,7 @@
 ; Required by eudaimonia's signature contract rather than by this calculus:
 ; what a generated checker concludes is that the *conjunction* of a proof's
 ; assumptions is unsatisfiable, and nothing in resolution's own rules mentions
-; `and`. See ../../docs/defining-a-calculus.md,
+; `and`. See ../../tutorials/defining-a-calculus.md,
 ; "The operator the calculus does not use".
 (declare-const and (-> Bool Bool Bool) :right-assoc-nil true)
 

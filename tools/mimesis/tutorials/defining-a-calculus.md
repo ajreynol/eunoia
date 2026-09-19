@@ -236,7 +236,7 @@ test against both files — and it is 20 lines against 50.
 
 Which to ship is a real choice rather than an obvious one: the builtin version is
 shorter and the hand-written one is what you can put a name and a comment on, and
-[the case study](case-study.md) is about an episode where that kind of choice set
+[the case study](../docs/case-study.md) is about an episode where that kind of choice set
 more than half of a proof's size. Writing the programs first is still the right
 way to *learn* the language, which is what this file is for.
 

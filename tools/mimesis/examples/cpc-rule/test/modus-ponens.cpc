@@ -1,4 +1,4 @@
-; Existing CPC rule used as a model in ../../../docs/adding-a-cpc-rule.md.
+; Existing CPC rule used as a model in ../../../tutorials/adding-a-cpc-rule.md.
 ; Expected: correct. Tested with Ethos; no Lean build was run here.
 (declare-const p Bool)
 (declare-const q Bool)

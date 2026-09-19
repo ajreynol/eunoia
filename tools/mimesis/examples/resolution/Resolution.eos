@@ -7,7 +7,7 @@
 ; this is written against is `smt.eos`, which is the same for every calculus
 ; over ordinary SMT-LIB and is not this file's to change.
 ;
-; NOT COMPILED HERE. See ../../docs/defining-a-calculus.md, "What was checked
+; NOT COMPILED HERE. See ../../tutorials/defining-a-calculus.md, "What was checked
 ; and what was not": the tutorial's proof tests were run with `ethos`, which
 ; reads the signature and never this file. This file is written in the form of
 ; eudaimonia's own `new_checker/examples/hello/Hello.eos`, with `or` added.

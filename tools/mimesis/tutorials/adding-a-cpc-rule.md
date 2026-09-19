@@ -92,7 +92,7 @@ and a program when the conclusion needs computation. A condition guaranteed
 by cvc5's current producer still belongs in the signature if soundness requires
 it: arbitrary proof files can call the rule too.
 
-That last distinction is the point of the [BV abstraction case study](case-study.md):
+That last distinction is the point of the [BV abstraction case study](../docs/case-study.md):
 the producer enforced a bit-width restriction that the signature initially
 omitted, and the Logos proof exposed the omission.
 
@@ -345,7 +345,7 @@ not a defect in anybody's tree.
 
 | what happened | whose |
 | --- | --- |
-| the job spans two repositories and a pin, and no one page carries it end to end: this tutorial was assembled from cvc5's `output_cpc.rst`, two contrib scripts, one workflow file and Logos's `install/README.md` | **the documentation's** — and the four specific gaps are written out in [upstream-draft.md](upstream-draft.md), as a draft for a person to take upstream |
+| the job spans two repositories and a pin, and no one page carries it end to end: this tutorial was assembled from cvc5's `output_cpc.rst`, two contrib scripts, one workflow file and Logos's `install/README.md` | **the documentation's** — and the four specific gaps are written out in [upstream-draft.md](../docs/upstream-draft.md), as a draft for a person to take upstream |
 | `install-cpc.sh --check` compares regenerated output and does **not** typecheck the proofs it preserved, so a green `--check` after a signature change says nothing about whether the rule proofs still go through | **the documentation's** — the installer says so; the cost is that a reader meets the flag at the moment they would otherwise draw the opposite conclusion |
 | a plain `install-cpc.sh` regenerates `Cpc` alone, while Logos's regeneration CI checks `Cpc` and `CpcMini`: the invocation that matches CI is the flagged one | **nobody's** — regenerating less than CI checks is a defensible default, and the cost lands on whoever forgets `--all` |
 | `--rules` reads as a way to refresh one proof and selects a reduced calculus instead | **the documentation's** — a flag whose name suggests a filter over the package it is run against |

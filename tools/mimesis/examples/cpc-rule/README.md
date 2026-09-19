@@ -1,7 +1,7 @@
 # A CPC rule's proof tests
 
-Worked files for [adding a CPC rule](../../docs/adding-a-cpc-rule.md), using the
-existing `modus_ponens` rule as the model. These files read the real CPC
+Worked files for [adding a CPC rule](../../tutorials/adding-a-cpc-rule.md),
+using the existing `modus_ponens` rule as the model. These files read the real CPC
 signature; they do not define a new calculus or add a duplicate rule.
 
 ```bash
@@ -29,4 +29,4 @@ Ethos binary used had SHA-256
 it was an existing build, not a fresh build of cvc5's Ethos pin. These are
 Ethos tests; no Logos regeneration or Lean build was run for this example.
 See the tutorial's
-[validation record](../../docs/adding-a-cpc-rule.md#sources-and-validation).
+[validation record](../../tutorials/adding-a-cpc-rule.md#sources-and-validation).

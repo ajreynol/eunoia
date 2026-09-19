@@ -13,6 +13,14 @@ which kanon maintains. Started by a human, read-only, advertised in ecosystem
 listings, and not part of what the repository carrying it ships. Deleting this
 directory changes nothing anywhere else.
 
+**One named exception.** In one respect this project is **not an island**:
+eunoia's front page names and advertises it, a link inward that a reader meets
+before this page. That is the parent's choice, recorded here so that it is a
+named exception rather than drift. What has been delivered is the account, the
+two-readings comparison, the disagreement register and the feedback ledger —
+none of it carried upstream. The promotion decision is therefore open, and it
+is the human maintainer's.
+
 ## The question
 
 **What is Eunoia, as a language, independently of any checker?**

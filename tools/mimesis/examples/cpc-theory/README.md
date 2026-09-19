@@ -1,6 +1,7 @@
 # CPC theory examples
 
-Worked proofs for [Extending CPC theories](../../docs/extending-cpc-theories.md),
+Worked proofs for
+[Extending CPC theories](../../tutorials/extending-cpc-theories.md),
 using cvc5's expert finite-field theory. These fixtures load cvc5's signatures
 directly; none of them includes a signature itself.
 
@@ -23,7 +24,7 @@ must fail for the stated reason.
 | [`non-prime.cpc`](test/non-prime.cpc) | main and expert | checks | `(FiniteField 6)` is a well-typed CPC type; the declaration says nothing about primality |
 | [`mixed-fields.cpc`](test/mixed-fields.cpc) | main and expert | `Type checking failed:` | `ff.add` infers one field parameter, so adding across two field sizes fails |
 
-The [tutorial commands](../../docs/extending-cpc-theories.md#7-check-the-theory-with-ethos)
+The [tutorial commands](../../tutorials/extending-cpc-theories.md#7-check-the-theory-with-ethos)
 show the individual Ethos invocations. The explicit main-only run matters:
 cvc5's `cpc_gen.sh` helper includes both signatures by default, so it would not
 catch an expert symbol in a proof that is supposed to be safe.

@@ -1,7 +1,7 @@
 # CPC operator examples
 
 Worked proofs for
-[Extending CPC with a new theory operator](../../docs/extending-cpc-operators.md),
+[Extending CPC with a new theory operator](../../tutorials/extending-cpc-operators.md),
 using cvc5's existing `int.pow2`. These fixtures load cvc5's main signature
 directly; none of them includes a signature itself.
 
