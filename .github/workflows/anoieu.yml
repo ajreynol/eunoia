@@ -1,0 +1,12 @@
+name: anoieu
+
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  policy:
+    uses: ajreynol/anoieu/.github/workflows/policy.yml@main
+    with:
+      policy-version: '1'

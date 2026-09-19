@@ -66,15 +66,6 @@ Each example's README says what its script checks and what it does not. No
 project here is a dependency of anything: writing a Eunoia signature, generating
 a checker and proving rules in Lean all happen without a checkout of this tree.
 
-## Who writes it
-
-**Written by AI agents under light supervision.** The human maintainer is
-`ajreynol` — Andrew Reynolds, University of Iowa and AWS — who is the authority
-over this repository and the answer to *who do I take this up with*. An agent
-holds no footing and makes no decision here: starting a project under `tools/`,
-changing what one is chartered to do, ending one, and carrying anything to
-another repository are all a person's.
-
 ## The ecosystem
 
 This tree is arranged by the Eunoia ecosystem's shared policy, which
@@ -94,6 +85,25 @@ carry their own indexes.
 **The name register is kanon's.** As of 2026-09-19 its glossary entries for both
 projects name the repositories they were written in rather than this one.
 Editing the register is kanon's and nothing here does it.
+
+## How this repository is maintained
+
+This repository is part of the **Eunoia ecosystem** and follows its shared
+repository policy, kept by [kanon](https://github.com/ajreynol/kanon) in
+[`docs/policy.md`](https://github.com/ajreynol/kanon/blob/main/docs/policy.md).
+
+**The checker runs here on every push**, as `anoieu / policy`. This repository
+names a policy contract rather than pinning a checker commit, so what is held
+still is the obligations and not the implementation: a build here can turn red
+with nothing committed, and when it does, a violation already in this tree has
+started being reported.
+
+**Written by AI agents under light supervision.** The human maintainer is
+`ajreynol` — Andrew Reynolds, University of Iowa and AWS — who is the authority
+over this repository and the answer to *who do I take this up with*. An agent
+holds no footing and makes no decision here: starting a project under `tools/`,
+changing what one is chartered to do, ending one, and carrying anything to
+another repository are all a person's.
 
 [ethos]: https://github.com/cvc5/ethos
 [manual]: https://github.com/cvc5/ethos/blob/main/user_manual.md
