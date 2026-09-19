@@ -1,0 +1,8 @@
+; The resolvent is a single literal, and must be written as the one-element
+; clause `(or q)`: what the rule computes is a list, and a bare `q` is not one.
+; Expected: correct.
+(declare-const p Bool)
+(declare-const q Bool)
+(assume @a0 (or p q))
+(assume @a1 (not p))
+(step @c0 (or q) :rule resolution :premises (@a0 @a1) :args (p))

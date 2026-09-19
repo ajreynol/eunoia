@@ -1,0 +1,5 @@
+; The declaration (-> Int Type) accepts any integer index, so a field of
+; order 6 is a well-typed CPC type. Nothing in the signature says otherwise;
+; a model for the theory is where the index has to be a prime power.
+(declare-const z (FiniteField 6))
+(assume @a (= (ff.add z z) z))

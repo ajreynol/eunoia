@@ -1,0 +1,21 @@
+; Resolution, with the two programs replaced by list builtins.
+;
+; Same calculus, same tests: the tutorial's last section, kept as a file so that
+; the claim "these behave identically on test/" is something a reader can run
+; rather than take on trust. `check.sh` runs the suite against both signatures.
+
+(declare-const or (-> Bool Bool Bool) :right-assoc-nil false)
+(declare-const not (-> Bool Bool))
+(declare-const and (-> Bool Bool Bool) :right-assoc-nil true)
+
+; $contains l c  becomes  (eo::list_find or c l) being something other than -1;
+; $remove l c    becomes  (eo::list_erase_all or c l).
+(declare-rule resolution ((C1 Bool) (C2 Bool) (l Bool))
+  :premises (C1 C2)
+  :args (l)
+  :requires (((eo::eq (eo::list_find or (eo::list_singleton_intro or C1) l) (eo::neg 1)) false)
+             ((eo::eq (eo::list_find or (eo::list_singleton_intro or C2) (not l)) (eo::neg 1)) false))
+  :conclusion (eo::list_concat or
+                (eo::list_erase_all or (eo::list_singleton_intro or C1) l)
+                (eo::list_erase_all or (eo::list_singleton_intro or C2) (not l)))
+)

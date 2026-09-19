@@ -1,0 +1,7 @@
+; Declaring the theory gave it syntax, not semantics. $run_evaluate has no
+; case for ff.add, so it returns the term unchanged and evaluate proves the
+; reflexive equality instead of computing 3 + 5 = 1 in the field of order 7.
+; The failure is an unexpected conclusion, not a missing symbol.
+(assume @neq (not (= (ff.add (ff.value 7 3) (ff.value 7 5)) (ff.value 7 1))))
+(step @eval (= (ff.add (ff.value 7 3) (ff.value 7 5)) (ff.value 7 1))
+  :rule evaluate :args ((ff.add (ff.value 7 3) (ff.value 7 5))))

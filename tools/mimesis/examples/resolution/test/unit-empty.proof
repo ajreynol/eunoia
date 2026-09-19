@@ -1,0 +1,7 @@
+; Unit clauses written as bare literals, resolving to the empty clause.
+; `false` is the empty clause, and a checker's refutation target.
+; Expected: correct.
+(declare-const p Bool)
+(assume @a0 p)
+(assume @a1 (not p))
+(step @c0 false :rule resolution :premises (@a0 @a1) :args (p))

@@ -1,0 +1,4 @@
+; evaluate computes its conclusion rather than checking a claimed one.
+; The step below claims 9, so the application is rejected.
+(assume @neq (not (= (int.pow2 3) 9)))
+(step @eval (= (int.pow2 3) 9) :rule evaluate :args ((int.pow2 3)))

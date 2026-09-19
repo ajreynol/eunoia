@@ -1,0 +1,85 @@
+; Resolution: propositional resolution over clauses.
+;
+; Written in tools/mimesis/docs/defining-a-calculus.md, one decision at a time.
+; This file is the end state of that walk-through, and every claim the
+; tutorial makes about it was checked by running ethos over test/.
+
+; --- what a clause is -------------------------------------------------------
+;
+; A clause is a disjunction of literals, and `:right-assoc-nil false` makes
+; `false` the nil terminator of `or`. Three consequences, all of them used
+; below:
+;
+;   * `(or a b)` is `(or a (or b false))`, so a clause is a *list* and the
+;     eo::list_* operators apply to it;
+;   * the empty clause is exactly `false` -- which is also what a generated
+;     checker tests for when it asks whether a proof is a refutation;
+;   * `(or a)` is `(or a false)`, a singleton list, while a bare `a` is not a
+;     list at all. That distinction costs one operator in the rule below.
+(declare-const or (-> Bool Bool Bool) :right-assoc-nil false)
+
+(declare-const not (-> Bool Bool))
+
+; Required by the framework's signature contract rather than by this calculus:
+; what a generated checker concludes is that the *conjunction* of a proof's
+; assumptions is unsatisfiable, and nothing in resolution's own rules mentions
+; `and`. See ../../docs/defining-a-calculus.md,
+; "The operator the calculus does not use".
+(declare-const and (-> Bool Bool Bool) :right-assoc-nil true)
+
+; --- the side conditions ----------------------------------------------------
+
+; program: $contains
+; args:
+; - l Bool: the literal to look for.
+; - c Bool: the clause to look in, as an `or`-list.
+; return: true if l occurs in c.
+(program $contains ((l Bool) (x Bool) (xs Bool :list))
+  :signature (Bool Bool) Bool
+  (
+    (($contains l false)     false)
+    (($contains l (or l xs)) true)
+    (($contains l (or x xs)) ($contains l xs))
+  )
+)
+
+; program: $remove
+; args:
+; - l Bool: the literal to remove.
+; - c Bool: the clause to remove it from, as an `or`-list.
+; return: c with every occurrence of l removed.
+;
+; Removing *every* occurrence is what makes the duplicate literals that
+; resolution produces disappear without a separate factoring rule.
+(program $remove ((l Bool) (x Bool) (xs Bool :list))
+  :signature (Bool Bool) Bool
+  (
+    (($remove l false)     false)
+    (($remove l (or l xs)) ($remove l xs))
+    (($remove l (or x xs)) (eo::cons or x ($remove l xs)))
+  )
+)
+
+; --- the rule ---------------------------------------------------------------
+
+; rule: resolution
+; premises:
+; - C1 Bool: a clause containing the pivot.
+; - C2 Bool: a clause containing its negation.
+; args:
+; - l Bool: the pivot literal.
+; requires: that l occurs in C1 and (not l) occurs in C2.
+; conclusion: C1 and C2 concatenated, with every l and every (not l) removed.
+;
+; `eo::list_singleton_intro` is what admits a unit clause written as the bare
+; literal `p` rather than as `(or p)`: it leaves a list alone and wraps anything
+; else. Without it, a proof whose premise is a unit clause gets stuck.
+(declare-rule resolution ((C1 Bool) (C2 Bool) (l Bool))
+  :premises (C1 C2)
+  :args (l)
+  :requires ((($contains l (eo::list_singleton_intro or C1)) true)
+             (($contains (not l) (eo::list_singleton_intro or C2)) true))
+  :conclusion (eo::list_concat or
+                ($remove l (eo::list_singleton_intro or C1))
+                ($remove (not l) (eo::list_singleton_intro or C2)))
+)

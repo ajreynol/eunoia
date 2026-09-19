@@ -1,0 +1,5 @@
+; The operator on a value: $run_evaluate computes it, and evaluate returns
+; the equality between the term and its computed result.
+(assume @neq (not (= (int.pow2 3) 8)))
+(step @eval (= (int.pow2 3) 8) :rule evaluate :args ((int.pow2 3)))
+(step @false false :rule contra :premises (@eval @neq))

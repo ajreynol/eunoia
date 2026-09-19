@@ -1,0 +1,5 @@
+; The signature's convention for an argument SMT-LIB says nothing about:
+; $arith_eval_int_pow_2 answers 0 below zero. Logos must agree with this.
+(assume @neq (not (= (int.pow2 (- 3)) 0)))
+(step @eval (= (int.pow2 (- 3)) 0) :rule evaluate :args ((int.pow2 (- 3))))
+(step @false false :rule contra :premises (@eval @neq))

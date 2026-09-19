@@ -1,0 +1,8 @@
+; Two clauses sharing a pivot: the textbook step.
+; Expected: correct.
+(declare-const p Bool)
+(declare-const q Bool)
+(declare-const r Bool)
+(assume @a0 (or p q))
+(assume @a1 (or (not p) r))
+(step @c0 (or q r) :rule resolution :premises (@a0 @a1) :args (p))

@@ -1,0 +1,7 @@
+; The same operator on a term that is not a value. $arith_eval_int_pow_2
+; returns its argument's application unchanged, so evaluate proves (= t t).
+; An evaluator that got stuck here would make the rule fail on this input.
+(declare-const x Int)
+(assume @neq (not (= (int.pow2 x) (int.pow2 x))))
+(step @eval (= (int.pow2 x) (int.pow2 x)) :rule evaluate :args ((int.pow2 x)))
+(step @false false :rule contra :premises (@eval @neq))

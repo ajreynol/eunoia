@@ -1,0 +1,8 @@
+; The step claims a resolvent that drops a literal it may not drop.
+; Expected: rejected -- the conclusion does not match what the rule computes.
+(declare-const p Bool)
+(declare-const q Bool)
+(declare-const r Bool)
+(assume @a0 (or p q))
+(assume @a1 (or (not p) r))
+(step @c0 (or q) :rule resolution :premises (@a0 @a1) :args (p))

@@ -1,0 +1,8 @@
+; Expected: modus_ponens rejects the mismatched antecedent.
+; Tested with Ethos; no Lean build was run here.
+(declare-const p Bool)
+(declare-const q Bool)
+(declare-const r Bool)
+(assume @r r)
+(assume @imp (=> p q))
+(step @q q :rule modus_ponens :premises (@r @imp))

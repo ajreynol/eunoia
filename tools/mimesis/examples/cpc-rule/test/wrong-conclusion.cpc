@@ -1,0 +1,7 @@
+; Expected: the computed conclusion is q, not the claimed p.
+; Tested with Ethos; no Lean build was run here.
+(declare-const p Bool)
+(declare-const q Bool)
+(assume @p p)
+(assume @imp (=> p q))
+(step @q p :rule modus_ponens :premises (@p @imp))

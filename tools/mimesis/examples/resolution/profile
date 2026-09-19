@@ -1,0 +1,5 @@
+# What is true of this calculus, for scripts/new-checker.sh --spec to record.
+# Verified against the compiler's output at install time.
+PROFILE_SCOPES=no
+PROFILE_LIST_PREMISES=no
+PROFILE_INDEXED_OPS=0

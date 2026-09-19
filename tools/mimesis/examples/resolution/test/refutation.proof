@@ -1,0 +1,11 @@
+; A whole refutation of an unsatisfiable CNF, including a step whose resolvent
+; has a duplicate literal -- `$remove` drops every occurrence, so no separate
+; factoring rule is needed.
+; Expected: correct.
+(declare-const p Bool)
+(declare-const q Bool)
+(assume @a0 (or p q))
+(assume @a1 (or (not p) q))
+(assume @a2 (not q))
+(step @c0 (or q q) :rule resolution :premises (@a0 @a1) :args (p))
+(step @c1 false :rule resolution :premises (@c0 @a2) :args (q))

@@ -1,0 +1,7 @@
+; The same step with the resolvent written as a bare literal.
+; Expected: rejected -- the rule proves `(or q)` and the step claims `q`.
+(declare-const p Bool)
+(declare-const q Bool)
+(assume @a0 (or p q))
+(assume @a1 (not p))
+(step @c0 q :rule resolution :premises (@a0 @a1) :args (p))

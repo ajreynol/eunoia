@@ -1,0 +1,32 @@
+; What the symbols of Resolution.eo mean, as a transformation into the deep
+; embedding of SMT-LIB that a generated checker's correctness proof is stated
+; against.
+;
+; All three symbols transform pointwise into the SMT-LIB symbol of the same
+; name, which is what an arity written on its own says. The SMT-LIB semantics
+; this is written against is `smt.eos`, which is the same for every calculus
+; over ordinary SMT-LIB and is not this file's to change.
+;
+; NOT COMPILED HERE. See ../../docs/defining-a-calculus.md, "What was checked
+; and what was not": the tutorial's proof tests were run with `ethos`, which
+; reads the signature and never this file. This file is written in the form of the
+; parent's own `examples/hello/Hello.eos`, with `or` added.
+
+(define-symbol not (x))
+
+(define-symbol and (x y))
+
+(define-symbol or (x y))
+
+; Required whatever the calculus declares: the pipeline asks the semantics which
+; datatype names are reserved, even for a calculus with no datatypes, so a
+; signature that has none still has to answer. `:keep` is what says the block
+; stands regardless of what the input declares. Copied from the parent's
+; `examples/hello/Hello.eos`, where the same block appears for the same reason.
+(program $eo_to_smt_reserved_datatype_name ((s "String"))
+  :keep
+  :signature ("String") "Bool"
+  (
+  (($eo_to_smt_reserved_datatype_name s) ("string_prefix_eq" "str_at_sign" s))
+  )
+)

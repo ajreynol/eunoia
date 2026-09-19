@@ -1,0 +1,9 @@
+; The second clause does not contain the negated pivot, so this is weakening
+; wearing resolution's name. Sound, and still not a resolution step.
+; Expected: rejected -- the :requires side condition fails.
+(declare-const p Bool)
+(declare-const q Bool)
+(declare-const r Bool)
+(assume @a0 (or p q))
+(assume @a1 (or q r))
+(step @c0 (or q q r) :rule resolution :premises (@a0 @a1) :args (p))

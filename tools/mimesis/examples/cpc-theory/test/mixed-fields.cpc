@@ -1,0 +1,5 @@
+; What the types do enforce: ff.add infers one field parameter from both of
+; its arguments, so adding across two field sizes fails to type check.
+(declare-const x (FiniteField 7))
+(declare-const y (FiniteField 11))
+(assume @bad (= (ff.add x y) x))

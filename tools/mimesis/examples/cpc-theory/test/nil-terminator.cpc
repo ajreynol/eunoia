@@ -1,0 +1,8 @@
+; ff.add is :right-assoc-nil with (ff.value p 0) as its nil terminator, so
+; (ff.add x (ff.value 7 0)) and x are the same list. That is what makes this
+; provable by normalization, with no rule about the field's zero.
+(declare-const x (FiniteField 7))
+(assume @neq (not (= (ff.add x (ff.value 7 0)) x)))
+(step @eq (= (ff.add x (ff.value 7 0)) x)
+  :rule aci_norm_expert :args ((= (ff.add x (ff.value 7 0)) x)))
+(step @false false :rule contra :premises (@eq @neq))
