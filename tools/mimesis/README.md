@@ -1,7 +1,8 @@
 # Mimesis
 
 **Where to learn how to write Eunoia and maintain its verification in Logos.**
-A child project of the Eudaimonia build framework, in two strands:
+A child project of [eunoia](../../README.md), the repository for language
+research, in two strands:
 
 - **Case studies** read an episode that already happened — a signature somebody
   wrote, and whatever answered back: a stated proof obligation, a generated
@@ -43,18 +44,20 @@ and leaves through the parent in a person's hands, never through an entry here.
 **A tutorial ships what works.** Every claim in one is something that was run,
 and anything that was not run says so — in the tutorial and in the file itself.
 
-**A draft is a draft, not a dispatch.** Where writing an entry here turned
-up something another project might want to hear, it is written down for a person
+**A draft is a draft, not a dispatch.** Where writing an entry here turned up
+something another project might want to hear, it is written down for a person
 to send or to drop; sending it is not this project's to do. It is not
 correspondence and this project has no channel: a child project is addressed
-through the repository that carries it, and the only `docs/discussion.md` in
-this tree is Eudaimonia's.
+through the repository that carries it, and the repository that carries this
+one keeps no `docs/discussion.md` at all. Where there is no discussion file
+there is no wire, in either direction, and what is said is carried by a person.
 
 **Both are additive.** The Eunoia [manual][manual] is the authority on the
-language, the framework's [front page](../../README.md) on what a signature must
-provide, and the compiler's output on what a signature means. Where an entry
-here disagrees with any of them, they are right and the disagreement is this
-project's to explain.
+language, the [signature contract][contract] of [eudaimonia][eudaimonia] — the
+checker-build framework, *the framework* wherever a ledger row below says it —
+on what a signature must provide, and the compiler's output on what a signature
+means. Where an entry here disagrees with any of them, they are right and the
+disagreement is this project's to explain.
 
 ## The ledger
 
@@ -77,10 +80,9 @@ documentation's*, what it names is a place a reader has to reconstruct something
 [upstream-draft.md](docs/upstream-draft.md) and sending it is a person's.
 
 Nothing in a ledger entry is a soundness claim. Passing proof tests does not
-make a calculus sound — it shows that a signature accepts and rejects the proofs
-it was shown, and a freshly generated checker's soundness proofs are unfinished
-by construction, as the parent's
-[limitations](../../docs/limitations.md#nothing-is-proven-yet) say.
+make a calculus sound — it shows that a signature accepts and rejects the
+proofs it was shown, and a freshly generated checker's soundness proofs are
+unfinished by construction, as eudaimonia's [limitations][limitations] say.
 
 **No paper.** A reading of somebody's history is not a result. That changes if
 there are enough entries for counts to mean something, at least one of them
@@ -95,16 +97,17 @@ has already done it, set down in enough detail to be imitated and argued with.
 Learning from an existing CPC rule and designing a new signature are different
 starting points; the tutorials give each its own route.
 
-The name is reserved in [ynoia's register][names], in kanon's tree, and nothing
-here edits it; a reader who finds it listed as *not started* should read that as
+The name is registered in [kanon's glossary][names], and nothing here edits it;
+a reader who finds that entry naming a different repository should read it as
 an edit that is owed.
 
 ## An island
 
 It reads the parent, its neighbours and the compiler's tree, and writes only
-inside `tools/mimesis/`. Nothing in Eudaimonia links here, imports from here or
-runs anything here — deleting this directory changes nothing else. Files a
-framework run would produce are written outside the repository, never here.
+inside `tools/mimesis/`. Nothing outside imports from here or runs anything
+here, and the parent's front page links here and nothing more — deleting this
+directory changes nothing else. Files a framework run would produce are written
+outside the repository, never here.
 
 ## Status
 
@@ -119,5 +122,8 @@ followed through cvc5's expert finite fields. A person decides whether it
 **graduates** into its own repository, is **folded** into the parent, or is **retired in
 place** with a note saying what was learned; going quiet is not one of those.
 
-[names]: https://github.com/ajreynol/kanon/blob/5545d5cd20578ec890100810aa59165bb782c6e1/tools/ynoia/names.md#reserved-for-an-intended-launch
+[names]: https://github.com/ajreynol/kanon/blob/main/docs/glossary.md#mimesis
 [manual]: https://github.com/cvc5/ethos/blob/main/user_manual.md
+[eudaimonia]: https://github.com/ajreynol/eudaimonia
+[contract]: https://github.com/ajreynol/eudaimonia/blob/main/README.md#the-signature-contract
+[limitations]: https://github.com/ajreynol/eudaimonia/blob/main/docs/limitations.md#nothing-is-proven-yet

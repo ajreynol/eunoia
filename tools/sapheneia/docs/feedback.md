@@ -7,13 +7,14 @@ not appear to agree with itself. Some rows below are checkable by reading the
 sentence they cite; others are judgement, and those are the ones most likely to
 be a defect in our reading rather than in the manual.
 
-**Nothing here has been carried anywhere.** This is a ledger, not a report. Under
-[`docs/policy.md`](../../../docs/policy.md), anything that leaves this directory does
-so through the host repository's ordinary reporting discipline
-(`docs/reports/reporting-workflow.md`), carried by a person who can answer the follow-up,
-and only once confirmed. Rows here are *candidates* in the sense of
-`docs/reports/reporting-policy.md`: a candidate is published under our own name with the evidence
-they have, and explicitly unjudged.
+**Nothing here has been carried anywhere.** This is a ledger, not a report.
+Under the ecosystem's shared
+[`policy.md`](https://github.com/ajreynol/kanon/blob/main/docs/policy.md),
+anything that leaves this directory does so in the hands of a person who can
+answer the follow-up, under the receiving project's own reporting discipline,
+and only once confirmed. Nothing leaves by machine. A row here is a
+*candidate*: stated under our own name with the evidence it has, and explicitly
+unjudged until somebody who knows the language rules on it.
 
 Everything is about the **manual**, never about the language. Where a row
 implies a language decision rather than a wording change, it says so and stops
@@ -237,7 +238,7 @@ type to its attribute — expressed with *must*, *typically*, *should* and *are
 required to*, with no visible pattern to which is which. None is enforced at the
 declaration: a `:right-assoc-nil` operator over `Bool` with an `Int` nil is
 accepted, and so is a `:chainable` operator with a non-variadic combiner.
-*(Both checked against a build of `ethosEoc3`; `docs/notes.md` §3.)*
+*(Both checked against a build of `ethosEoc3`; anoieu's `docs/notes.md` §3.)*
 
 **Why it matters.** A reader cannot tell which of these a conforming checker may
 reject and which are advice. It is the largest single ambiguity found while

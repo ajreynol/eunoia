@@ -20,7 +20,7 @@
 
 (declare-const not (-> Bool Bool))
 
-; Required by the framework's signature contract rather than by this calculus:
+; Required by eudaimonia's signature contract rather than by this calculus:
 ; what a generated checker concludes is that the *conjunction* of a proof's
 ; assumptions is unsatisfiable, and nothing in resolution's own rules mentions
 ; `and`. See ../../docs/defining-a-calculus.md,

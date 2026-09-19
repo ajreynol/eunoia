@@ -350,7 +350,7 @@ stated type:
 
 > **Implementation. [verified]** Without `:type`, an Ethos `define` body is not
 > type checked at all — a body that cannot be typed is accepted silently and the
-> error surfaces at some later term that happens to ask. `docs/notes.md` §3
+> error surfaces at some later term that happens to ask. anoieu's `docs/notes.md` §3
 > records the case. This is a direct consequence of typing being on demand
 > ([chapter 8](#8-the-type-system)) rather than a decision about `define`, but
 > the effect is that `:type` is the only thing standing between a signature and
@@ -910,7 +910,7 @@ they are stated in six different places in the manual and enforced in none:
 > so is a `:chainable` operator whose combiner is a plain binary function. The
 > error appears later — at the first application whose type is asked for, or,
 > for the chainable case, only at four or more arguments — or does not appear at
-> all if no proof exercises the operator. `docs/notes.md` §3 records both cases
+> all if no proof exercises the operator. anoieu's `docs/notes.md` §3 records both cases
 > against a real build.
 
 > **Unsettled.** The manual writes these with a mixture of *must*, *should* and
@@ -1223,7 +1223,7 @@ constant, but not to another program.
 > **Implementation. [verified]** Because matching is first-match-wins and
 > nothing checks coverage, an unreachable case is accepted silently: there is no
 > notion of a dead case, so shadowing is well defined and invisible.
-> `docs/notes.md` §3 records the case.
+> anoieu's `docs/notes.md` §3 records the case.
 
 ### 6.2 Patterns
 
@@ -1299,7 +1299,7 @@ match it and the traversal does not descend into `A` and `B`. A program that
 >
 > A proof taking the first branch checks. A proof taking the second fails with a
 > type error. Nothing between the two says the signature was already wrong.
-> `docs/notes.md` §3 records the case.
+> anoieu's `docs/notes.md` §3 records the case.
 
 > **Unsettled.** Whether this is the language or an implementation is exactly
 > the question of what a *well-formed signature* is, and Eunoia has no such
@@ -1780,7 +1780,7 @@ Reproduced from the manual's appendix. Signature and proof files are
 
 Collected from the marks above. These are not documentation gaps; they are
 places where there is a real question and the current answer is *whatever the
-implementation does*. Several are inherited from `docs/notes.md` §4, which
+implementation does*. Several are inherited from anoieu's `docs/notes.md` §4, which
 reached them from the other direction — by trying to write checks for them.
 
 **What is a well-formed signature?** Eunoia has no such notion. Typing is on
@@ -1848,6 +1848,6 @@ Not gaps — deliberate exclusions, listed so a reader can tell the two apart.
 | building, installing and invoking a checker; command-line options; streaming | the checker's own documentation |
 | trace tags, statistics, error message formatting, dagified printing | likewise |
 | the `.eos` semantics-set language and the compiler that reads it | their own reference; out of charter ([`../README.md`](../README.md)) |
-| the case for the ecosystem's arrangement | `tools/ynoia/docs/why-eunoia.md`; out of charter |
-| proposed changes to Eunoia | the host repository's report to the language's maintainers |
+| the case for the ecosystem's arrangement | kanon's `tools/ynoia/docs/why-eunoia.md`; out of charter |
+| proposed changes to Eunoia | a person's report to the language's maintainers |
 | the derived-operator signature reconstructing the list operators in pure Eunoia | the manual's appendix, which is the right place for it |

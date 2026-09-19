@@ -1,4 +1,5 @@
-# What is true of this calculus, for scripts/new-checker.sh --spec to record.
+# What is true of this calculus, for eudaimonia's scripts/new-checker.sh --spec
+# to record.
 # Verified against the compiler's output at install time.
 PROFILE_SCOPES=no
 PROFILE_LIST_PREMISES=no

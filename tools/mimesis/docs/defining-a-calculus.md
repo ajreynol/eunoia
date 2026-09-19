@@ -212,12 +212,13 @@ One more declaration is needed, and nothing in resolution asks for it:
 (declare-const and (-> Bool Bool Bool) :right-assoc-nil true)
 ```
 
-The framework's [signature contract](../../../README.md#the-signature-contract)
-requires a binary `and` that the semantics sends to `SmtTerm.and`, because what
-a generated checker concludes is that the *conjunction* of a proof's assumptions
-is unsatisfiable. Resolution's own rules never mention it. `ethos` does not care
-— the proofs above check without it — and `install/install-<calc>.sh` refuses to
-install without it, which is where an author who skipped the contract meets this.
+[eudaimonia][eudaimonia]'s [signature contract][contract] — *the framework*,
+wherever this tutorial says it — requires a binary `and` that the semantics
+sends to `SmtTerm.and`, because what a generated checker concludes is that the
+*conjunction* of a proof's assumptions is unsatisfiable. Resolution's own rules
+never mention it. `ethos` does not care — the proofs above check without it —
+and `install/install-<calc>.sh` refuses to install without it, which is where
+an author who skipped the contract meets this.
 
 ## 8. The programs you did not have to write
 
@@ -248,9 +249,9 @@ the output — `check.sh` does.
 
 **Not checked: the semantics.**
 [`Resolution.eos`](../examples/resolution/Resolution.eos) is written and is not
-compiled here. `ethos` reads the signature and never the semantics; compiling it
-needs `ethos-eoc`, and the build available in this environment is newer than the
-parent's pinned compiler and rejects the parent's own
+compiled here. `ethos` reads the signature and never the semantics; compiling
+it needs `ethos-eoc`, and the build available in this environment is newer than
+eudaimonia's pinned compiler and rejects eudaimonia's own
 `examples/hello/Hello.eos` in the same way it rejects this file. The file is
 therefore written to match that shipped example exactly in form, with `or`
 added, and is labelled unverified in its own header.
@@ -261,17 +262,22 @@ these rules are sound, only that this signature accepts and rejects the proofs
 listed above. To go further:
 
 ```sh
+MIMESIS=/absolute/path/to/eunoia/tools/mimesis
+EUDAIMONIA=/absolute/path/to/eudaimonia
+
 mkdir /tmp/res-spec
-cp tools/mimesis/examples/resolution/Resolution.eo  /tmp/res-spec/
-cp tools/mimesis/examples/resolution/Resolution.eos /tmp/res-spec/
-cp tools/mimesis/examples/resolution/profile        /tmp/res-spec/
-cp examples/hello/smt.eos                           /tmp/res-spec/   # unchanged
-scripts/new-checker.sh --checker Demo --calculus Resolution --spec /tmp/res-spec
+cp "$MIMESIS/examples/resolution/Resolution.eo"  /tmp/res-spec/
+cp "$MIMESIS/examples/resolution/Resolution.eos" /tmp/res-spec/
+cp "$MIMESIS/examples/resolution/profile"        /tmp/res-spec/
+cp "$EUDAIMONIA/examples/hello/smt.eos"          /tmp/res-spec/   # unchanged
+cd "$EUDAIMONIA" && scripts/new-checker.sh \
+  --checker Demo --calculus Resolution --spec /tmp/res-spec
 ```
 
-Those commands were **not** run here, and the spec directory is assembled
-outside this repository because a child project writes only inside its own
-directory.
+The generator is eudaimonia's and runs in eudaimonia's tree; only the spec
+directory comes from here. Those commands were **not** run here, and the spec
+directory is assembled outside this repository because a child project writes
+only inside its own directory.
 
 ## What it cost, for the ledger
 
@@ -292,3 +298,6 @@ reading a CPC rule. It is a *tutorial* — the artifact is meant to be correct a
 idiomatic — and the friction above is an informed author's rather than a new
 one's. An uninformed first-hand run would need a calculus nobody here has looked
 up: this file spends resolution.
+
+[eudaimonia]: https://github.com/ajreynol/eudaimonia
+[contract]: https://github.com/ajreynol/eudaimonia/blob/main/README.md#the-signature-contract

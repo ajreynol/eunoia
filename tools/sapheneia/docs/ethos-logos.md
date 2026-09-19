@@ -568,8 +568,8 @@ divergence would overstate the ledger.
 
 - **It does not say which side is right**, even where the manual does. Where the
   manual settles a row, the row says which reading the manual states; carrying
-  that anywhere is a person's job under the host repository's reporting
-  discipline, and nothing here has been carried anywhere.
+  that anywhere is a person's job, under the reporting discipline of the project
+  that receives it, and nothing here has been carried anywhere.
 - **It does not describe `.eos`.** The semantics-set language has its own
   reference (`tools/eoc/semantics/README.md` in the ethos tree). Rows cite a set
   where the set is the evidence; the language is out of scope, as it is for
@@ -641,7 +641,7 @@ increment.
 
 | tree | at |
 | --- | --- |
-| kanon (this repository) | `dd4780a` |
+| kanon, the tree this was written in | `dd4780a` |
 | ethos | `ethosEoc3`, `4d1ba77c` |
 | logos | `main`, `be479120` |
 | the compiler logos pins | ethos `406b5499` — 11 commits behind the above |

@@ -7,9 +7,11 @@ property of the **account**, not of the thing accounted for. Eunoia is not
 unclear. The description of it can be clearer, and that is the whole of what
 this project is for.*
 
-A research project under [`docs/policy.md`](../../docs/policy.md). Started by a human,
-read-only, advertised in ecosystem listings, and not part of what this repository
-ships. Deleting this directory changes nothing anywhere else.
+A research project under the ecosystem's shared
+[`policy.md`](https://github.com/ajreynol/kanon/blob/main/docs/policy.md),
+which kanon maintains. Started by a human, read-only, advertised in ecosystem
+listings, and not part of what the repository carrying it ships. Deleting this
+directory changes nothing anywhere else.
 
 ## The question
 
@@ -34,8 +36,9 @@ analyzer needs, and it is what this project tries to supply.
 2. **Feedback to the ethos manual.** Writing a second account of something is
    the most reliable way to find the places the first one is silent, ambiguous,
    or contradicts itself. Those go in [`docs/feedback.md`](docs/feedback.md) as a ledger,
-   and are carried upstream — if at all — by a person, under the host
-   repository's ordinary reporting discipline. Nothing here is filed by machine.
+   and are carried upstream — if at all — by a person, under the reporting
+   discipline of the project that receives them. Nothing here is filed by
+   machine.
 
    **Two registers, because a silence and a disagreement are not the same
    thing.** `feedback.md` holds what the manual does not say;
@@ -67,12 +70,14 @@ The boundary matters more than the goals, so it is stated first-class.
 - **It does not justify any tool.** Not anoieu, not ethos, not the compiler, not
   the Lean development. If a paragraph here reads as an argument for something
   being built, it is off-charter and should be cut. The case for the ecosystem's
-  arrangement is argued in `tools/ynoia/docs/why-eunoia.md`, which is a different document
-  with a different audience, and this project does not participate in it.
+  arrangement is argued in kanon's
+  [`tools/ynoia/docs/why-eunoia.md`](https://github.com/ajreynol/kanon/blob/main/tools/ynoia/docs/why-eunoia.md),
+  which is a different document with a different audience, and this project does
+  not participate in it.
 - **It does not propose language changes.** Where the language is underspecified
   this account says so and stops. Proposing the resolution is a change to
-  Eunoia, which belongs in the host repository's report to the language's
-  maintainers, not in a description of the language as it stands.
+  Eunoia, which belongs in a person's report to the language's maintainers,
+  not in a description of the language as it stands.
 - **It does not describe `.eos`.** The semantics-set language read by
   `ethos-eoc` is a second language with its own reference, and folding it in
   would double the scope before the first goal is met. Candidate for later; out
@@ -93,28 +98,31 @@ The boundary matters more than the goals, so it is stated first-class.
 
 ## Method, and what it inherits
 
-The project builds on what writing an analyzer taught this repository, which is
-the reason it lives here rather than in a repository of its own — a research
-project that does not use the host's evidence should be its own repository.
-Three inheritances, each of which must be cited where it is used:
+The project builds on what writing an analyzer taught
+[anoieu](https://github.com/ajreynol/anoieu). That evidence is anoieu's and is
+cited as anoieu's wherever it is used; what this repository supplies is the
+subject, since describing the language is the whole of what it is for. Three
+inheritances, each of which must be cited where it is used:
 
-- **Verified behaviour.** `docs/notes.md` §3 records six behaviours checked
-  against a real ethos build on `ethosEoc3` — a rule concluding a non-`Bool`
-  term, a dormant program case with the wrong return type, an unchecked `define`
-  body, a mistyped nil terminator, a `:chainable` operator with a non-variadic
-  combiner, a dead program case. Each is a place where the manual's normative
-  language and the implementation's behaviour come apart, and each is a place
-  this account has to say which one is the language.
+- **Verified behaviour.** anoieu's
+  [`docs/notes.md`](https://github.com/ajreynol/anoieu/blob/main/docs/notes.md)
+  §3 records six behaviours checked against a real ethos build on `ethosEoc3` —
+  a rule concluding a non-`Bool` term, a dormant program case with the wrong
+  return type, an unchecked `define` body, a mistyped nil terminator, a
+  `:chainable` operator with a non-variadic combiner, a dead program case. Each
+  is a place where the manual's normative language and the implementation's
+  behaviour come apart, and each is a place this account has to say which one
+  is the language.
 
-- **The unsettled list.** `docs/notes.md` §4 is a list of questions where the
-  current answer is "whatever the implementation does". They are reproduced in
-  this account's closing chapter rather than resolved, because resolving them is
-  a language change and that is out of scope.
+- **The unsettled list.** anoieu's `docs/notes.md` §4 is a list of questions
+  where the current answer is "whatever the implementation does". They are
+  reproduced in this account's closing chapter rather than resolved, because
+  resolving them is a language change and that is out of scope.
 
-- **The reading itself.** `docs/notes.md` §1 is the shape of `.eo` as the
-  analyzer's front end had to model it, which is a second reading of the same
-  manual made for a different purpose, and disagreements between it and this one
-  are worth chasing.
+- **The reading itself.** anoieu's `docs/notes.md` §1 is the shape of `.eo` as
+  the analyzer's front end had to model it, which is a second reading of the
+  same manual made for a different purpose, and disagreements between it and
+  this one are worth chasing.
 
 The working rule for the account is a three-way split, applied everywhere:
 
@@ -134,12 +142,11 @@ convention.
 
 ## Status
 
-**First cut, drafted 2026-08-31.** Read against `user_manual.md` at
-`ethosEoc3` (`3cf1c03`, the commit `scripts/deps.lock` records). Every chapter
-exists; the ones on desugaring, evaluation and the type system are the ones
-worth reading, and the chapters on files and on the grammar are thin. Nothing
-here has been checked by anybody who knows Eunoia. The feedback ledger has
-entries and none of them has been carried anywhere.
+**First cut, drafted 2026-08-31.** Read against `user_manual.md` at `ethosEoc3`
+(`3cf1c03`). Every chapter exists; the ones on desugaring, evaluation and the
+type system are the ones worth reading, and the chapters on files and on the
+grammar are thin. Nothing here has been checked by anybody who knows Eunoia.
+The feedback ledger has entries and none of them has been carried anywhere.
 
 **The comparison, first cut 2026-09-17.** Twenty rows, read against ethos
 `ethosEoc3` (`4d1ba77c`) and logos `main` (`be479120`). Its ethos-side claims
@@ -166,6 +173,7 @@ answered; an unfiled disagreement is one project's opinion of another's prose.
 this account, with the answers that came back. The ledger is the raw material and
 is currently fifteen rows that have gone nowhere.
 
-Stated because [`../../docs/policy.md`](../../docs/policy.md) asks every child
-project to say whether a paper exists for it, what the plan is, or that there is
-nothing in it worth writing up. This is the second answer.
+Stated because the shared
+[`policy.md`](https://github.com/ajreynol/kanon/blob/main/docs/policy.md) asks
+every child project to say whether a paper exists for it, what the plan is, or
+that there is nothing in it worth writing up. This is the second answer.

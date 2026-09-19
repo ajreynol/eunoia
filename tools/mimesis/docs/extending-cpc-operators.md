@@ -198,7 +198,7 @@ in exactly one thing each:
 Run all five with:
 
 ```bash
-MIMESIS=/absolute/path/to/eudaimonia/tools/mimesis
+MIMESIS=/absolute/path/to/eunoia/tools/mimesis
 python3 "$MIMESIS/examples/cpc-operator/check.py" "$ETHOS" "$CVC5"
 ```
 

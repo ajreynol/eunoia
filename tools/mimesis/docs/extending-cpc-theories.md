@@ -309,7 +309,7 @@ should be asked:
 | `mixed-fields.cpc` | adding across two field sizes does not type check |
 
 ```bash
-MIMESIS=/absolute/path/to/eudaimonia/tools/mimesis
+MIMESIS=/absolute/path/to/eunoia/tools/mimesis
 python3 "$MIMESIS/examples/cpc-theory/check.py" "$ETHOS" "$CVC5"
 ```
 

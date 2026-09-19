@@ -159,9 +159,9 @@ public theorem cmd_step_bv_abstraction_properties ... := by
   sorry
 ```
 
-That file is 22 lines, and it is the whole of what Logos owes for this rule. The
-framework this repository generates puts the same obligation in the same place
-for a calculus of one rule.
+That file is 22 lines, and it is the whole of what Logos owes for this rule.
+The checkers eudaimonia generates put the same obligation in the same place for
+a calculus of one rule.
 
 ### 4. The unsoundness
 

@@ -16,8 +16,9 @@ term — a definition against which an implementation is correct or is not.
 - a proof that any particular calculus is sound. That is a question about a
   signature, not about the language it is written in.
 - a Lean development of the embedding, or of the compiler. Those are separate
-  pieces of future work under their own names (`tools/ynoia/docs/why-eunoia.md` calls them
-  *hermeneia* and *noesis*), with different subjects and different audiences.
+  pieces of future work under their own names (kanon's
+  `tools/ynoia/docs/why-eunoia.md` calls them *hermeneia* and *noesis*), with
+  different subjects and different audiences.
 - a decision on any of the open questions in
   [`manual.md` §11](manual.md#11-where-the-language-is-unsettled). A
   formalization has to *choose* on each of them; choosing is a change to
@@ -60,9 +61,9 @@ reproducible as a relation directly. It needs:
   reduce.
 
 It is worth doing first, on its own, for two reasons: it is finishable, and it
-is the layer with an existing differential oracle — this repository already has
-a desugarer checked against a real checker on a committed battery
-(`anoieu/desugar.py`, `scripts/oracle_desugar.py`, `tests/desugar/`). A
+is the layer with an existing differential oracle — anoieu already has a
+desugarer checked against a real checker on a committed battery
+(`anoieu_analyzer/desugar.py`, `tests/oracle_desugar.py`, `tests/desugar/`). A
 formalization of layer 1 could be validated against that battery on the day it
 was written, which is not true of any other layer.
 
@@ -124,7 +125,7 @@ Nobody would be starting from nothing.
 | the manual's *Derived Definitions of Evaluation Operators* (`tests/eo-definitions.eo` in ethos) | every list operator except `eo::nil`, written as ordinary Eunoia programs | a **self-interpretation**: layer 2 partly defined in the object language, and executable |
 | the ethos-eoc deep embedding and its `.eos` semantics sets | a compiler's model of the language | an independent reading to disagree with |
 | the logos Lean development | a second checker for the same proofs | a second reading, and a place where `eo::hash` was already declined |
-| this repository's desugarer battery | layer 1 against a real checker | validation for layer 1, today |
+| anoieu's desugarer battery | layer 1 against a real checker | validation for layer 1, today |
 
 The self-interpretation is the most interesting of these and the least
 discussed. A language that can define most of its own evaluator in itself has

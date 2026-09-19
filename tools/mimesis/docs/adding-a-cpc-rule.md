@@ -115,7 +115,7 @@ you are editing. To use the optional example files kept with this tutorial,
 set `MIMESIS` to their location:
 
 ```bash
-MIMESIS=/absolute/path/to/eudaimonia/tools/mimesis
+MIMESIS=/absolute/path/to/eunoia/tools/mimesis
 "$ETHOS" --include="$CVC5/proofs/eo/cpc/Cpc.eo" --require-proof-of-false \
   "$MIMESIS/examples/cpc-rule/test/modus-ponens.cpc"
 ```
