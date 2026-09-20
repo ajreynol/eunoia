@@ -18,12 +18,9 @@ this directory by machine.
 | fixed by changing what it says | fixed by adding a sentence |
 | the first row is fixed by changing **how the language is explained** | no row is that large |
 
-**The first row is also a correction to us.** [`manual.md`](manual.md) §8
-opens *"a proof is a term and proof checking is type checking"*, which we took
-from the manual rather than derived. We now think that account is the wrong way
-round, and [MD-01](#md-01) is the argument. A second account that repeats the
-first one's framing has not checked it, which is the characteristic failure of
-this whole project and is worth saying out loud.
+[MD-01](#md-01) compares the manuals' accounts of proof checking. Sapheneia's
+[§8](manual.md#8-proof-rules-as-programs) shows proof rule declarations and their
+corresponding programs.
 
 ---
 
@@ -262,8 +259,9 @@ rule can say. What they need — the state, the command transitions, the order o
 match/evaluate/produce, and what failure is — is in no section of the manual and
 has to be recovered from `plugins/` or from the implementation.
 
-**We propose nothing.** Whether the manual should carry an operational account,
-and what it should look like, is a decision for whoever owns the manual.
+The Ethos manual's presentation remains its maintainers' decision. Sapheneia's
+own manual explains how each proof rule determines a program's patterns and
+body.
 
 ---
 
@@ -523,13 +521,6 @@ and behaves as the ordinary checker when no `--plugin` is passed.
 **First cut, 2026-09-17.** Ten rows, one of which is most of the page. Nothing
 has been checked by anybody who knows Eunoia and nothing has been carried
 anywhere.
-
-**What is owed to [`manual.md`](manual.md).** Its §8 asserts the framing
-[MD-01](#md-01) rejects, and currently carries a pointer here rather than a
-rewrite. Rewriting that chapter around the machine — state, commands,
-match/evaluate/produce, stuckness — with the typed reading kept as the
-explanation of dependency, is the next substantial piece of work in this
-project.
 
 **Where this meets the other register.** Three rows of
 [`ethos-logos.md`](ethos-logos.md) are the same facts seen from the compilation

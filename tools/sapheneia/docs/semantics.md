@@ -42,12 +42,13 @@ informally.
 | --- | --- | --- |
 | **1. Desugaring** | `Σ ⊢ s ⇝ t` — source form `s` elaborates to term `t` under signature `Σ` | mechanical, and almost fully specified already |
 | **2. Evaluation** | `t ⇓ t'` — a term reduces | mechanical for most operators; `eo::hash` and `eo::nil` are the exceptions |
-| **3. Typing** | `Σ ⊢ t : T` | small, and nearly written already |
-| **4. Proof checking** | — | *nothing*: it is layer 3 applied to `Proof` types |
+| **3. Typing** | `Σ ⊢ t : T` | depends on evaluation of computed types |
+| **4. Proof rules** | `Σ ⊢ r ⇝ program(r)` | translating a declaration into input patterns and a guarded conclusion body |
 
-Layer 4 collapsing into layer 3 is the language's central design idea, and is
-the thing a formalization would make undeniable rather than merely stated. See
-[`manual.md` §8](manual.md#8-the-type-system).
+Layer 4 translates a rule declaration into a program with one case. That
+program uses layer 2 to match inputs and compute a conclusion, whose type is
+checked using layer 3. Examples are in
+[`manual.md` §8](manual.md#8-proof-rules-as-programs).
 
 ### Layer 1 — desugaring
 
@@ -97,27 +98,39 @@ The interesting content is not the arithmetic; it is:
 
 ### Layer 3 — typing
 
-Already close to formal. The manual's *Proofs as terms* appendix gives two
-rules, and they are the whole of application typing:
+For an ordinary application, match the argument's type and evaluate the result
+type under the resulting substitution:
 
 ```
-    f : (-> U S)        t : T                 f : (-> (Quote u) S)     t : T
-    ─────────────────────────  U·σ = T        ──────────────────────────────  u·σ = t
-        (f t) : S·σ                               (f t) : S·σ
+    f : (-> U R)        t : T
+    ─────────────────────────  Uσ = T
+         (f t) : eval(Rσ)
 ```
 
-plus the side condition that a well-typed term's type must be non-ground or
-fully reduced — which is where layers 2 and 3 are mutually recursive, since
-deciding "fully reduced" runs the evaluator, and the evaluator's programs have
-no termination argument. That mutual recursion is the one genuine technical
-difficulty in the stack, and it is the thing a formalization would have to be
-honest about that no informal account has had to be.
+Named dependent arguments also bind the supplied term after checking its type;
+`eo::quote` marks that binding in a program signature. See
+[`manual.md` §8.4](manual.md#84-where-term-typing-fits).
 
-What is missing from the two rules: the treatment of `:implicit` (an
+The computed type must be non-ground or fully reduced. Layers 2 and 3 interact:
+typing can run programs, while evaluation can ask for types with `eo::typeof`.
+Programs have no termination requirement, so the formalization must account
+for computations that do not terminate.
+
+What still needs an account: the treatment of `:implicit` (an
 elaboration, so arguably layer 1), of `:opaque` (which makes an application not
 an application, and so has to be visible to layer 2's matching), of overloading
 resolution (which is type-directed, so layer 3 feeds back into layer 1), and of
 `eo::self` in `declare-consts`.
+
+### Layer 4 — proof rules as programs
+
+The translation maps a declaration's arguments, premises and optional assumption
+or explicit conclusion to the input patterns of one program case. Requirements
+become guards around its conclusion body. Premise-list declarations determine
+how multiple premise formulas are packaged into one input. A formal account
+must specify this translation and show that applying the rule agrees with
+applying its program. The examples and field-by-field correspondence are in
+[`manual.md` §8](manual.md#8-proof-rules-as-programs).
 
 ## What already exists to build on
 
@@ -125,7 +138,8 @@ Nobody would be starting from nothing.
 
 | | what it is | what it gives |
 | --- | --- | --- |
-| the manual's *Proofs as terms* appendix | two typing rules and the proof-command correspondence | layer 3, most of the way |
+| Ethos's term checker and Sapheneia's account of term typing | ordinary application, dependent bindings and computed types | evidence for layer 3 |
+| Ethos's `declare-rule` implementation | the program associated with each rule declaration | evidence for layer 4; see [`manual.md` §8](manual.md#8-proof-rules-as-programs) |
 | the manual's *Derived Definitions of Evaluation Operators* (`tests/eo-definitions.eo` in ethos) | every list operator except `eo::nil`, written as ordinary Eunoia programs | a **self-interpretation**: layer 2 partly defined in the object language, and executable |
 | the ethos-eoc deep embedding and its `.eos` semantics sets | a compiler's model of the language | an independent reading to disagree with |
 | the logos Lean development | a second checker for the same proofs | a second reading, and a place where `eo::hash` was already declined |

@@ -64,8 +64,7 @@ revision.
    **Two registers, because a silence and a disagreement are not the same
    thing.** `feedback.md` holds what the manual does not say;
    [`docs/account-vs-manual.md`](docs/account-vs-manual.md) holds what it says
-   that we think is not so. The second is the shorter and heavier list, and its
-   first row is a correction to this project rather than to the manual.
+   that we think is not so. The second is the shorter and heavier list.
 
 3. **Wishue: a formal semantics.** Judgement forms and rules for the type
    system, the desugaring, and evaluation, at the level of detail where two
@@ -186,8 +185,8 @@ does not settle open language questions.
 ## Status
 
 **The draft account, first cut 2026-08-31.** Read against `user_manual.md` at `ethosEoc3`
-(`3cf1c03`). Every chapter exists; the ones on desugaring, evaluation and the
-type system are the ones worth reading, and the chapters on files and on the
+(`3cf1c03`). Every chapter exists; the ones on desugaring, evaluation and
+proof rules are the ones worth reading, and the chapters on files and on the
 grammar are thin. Nothing here has been checked by anybody who knows Eunoia.
 The feedback ledger has entries and none of them has been carried anywhere.
 
@@ -198,11 +197,10 @@ not executed. Four of the rows are instances of questions
 [`docs/manual.md`](docs/manual.md) §11 already lists as unsettled, which is the part worth
 pursuing.
 
-**The disagreements, first cut 2026-09-17.** Ten rows, one of which — that the
-manual presents proof checking as type checking where it is closer to program
-evaluation — is most of the page and is first of all a correction to
-[`docs/manual.md`](docs/manual.md) §8, which repeated the framing without checking it.
-That chapter now carries a correction note and is owed a rewrite.
+**The disagreements, first cut 2026-09-17.** Ten rows. The largest concerns how
+proof checking is explained. [`docs/manual.md`](docs/manual.md) §8 describes
+the programs corresponding to proof rule declarations, with examples of their
+patterns, requirements and conclusion bodies.
 
 ## Is there a paper in this?
 

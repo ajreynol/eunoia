@@ -18,14 +18,16 @@
 
 ## How to read this
 
-Eunoia has exactly one implementation today — **Ethos**, a proof checker written
-in C++ — and one description, which is that checker's manual. Nothing in the
-language's design requires this, and several things in the ecosystem assume it
-will not stay that way: a compiler emits Lean from Eunoia signatures, a Lean
-development checks the same proofs, and a fuzzer compares two checkers against
-each other on the same file. All of that needs a line between *what the language
-requires* and *what one program happens to do*, and no such line is currently
-drawn. Drawing it is what this document is for.
+The starting description of Eunoia is the manual for **Ethos**, a proof checker
+written in C++. A compiler also emits Lean from Eunoia signatures, a Lean
+development checks the same proofs, and a fuzzer compares the checkers. Readers
+need an account of the language that distinguishes its requirements from the
+behaviour of a particular implementation. Drawing that line, and investigating
+how to explain Eunoia more clearly, is what this document is for.
+
+**A proof rule is a program that matches premises and arguments, checks
+requirements and computes a conclusion.** [Chapter 8](#8-proof-rules-as-programs)
+shows how a rule declaration determines that program.
 
 So every claim here sits in one of three buckets, and the bucket is visible:
 
@@ -49,8 +51,12 @@ an example shows what a term becomes, `⇝` is desugaring and `==` is evaluation
 
 Eunoia is a **logical framework**: a language for defining logics rather than a
 logic. You write down a *signature* — the symbols of a theory, their types, the
-proof rules that may be applied to them — and the language gives you a notion of
-what it means for a proof in that theory to check.
+proof rules, written as programs that compute conclusions from premises and
+arguments — and the language gives you a notion of what it means for a proof in
+that theory to check.
+
+The [Ethos paper](https://doi.org/10.1007/978-3-032-32589-1_19) gives an overview
+of Eunoia and its implementation; the full citation is in [References](#references).
 
 It is aimed at one job in particular, which is recording and checking the proofs
 that SMT solvers emit. That shows in three places:
@@ -61,13 +67,13 @@ that SMT solvers emit. That shows in three places:
 - **There are no builtin theories.** `Int`, `+`, `and`, `distinct` and the rest
   are not in the language. Every one of them is declared in a signature, which
   is what makes the framework a framework and not a solver.
-- **Proofs are data.** A proof is a sequence of commands in a file, in a format
-  close to Alethe's, that a checker reads once.
+- **Proofs are executable command sequences.** In a format close to Alethe's,
+  commands introduce assumptions, run rules and record the resulting facts.
 
 A Eunoia file is a sequence of **commands**. There are no expressions at the top
 level, no module system beyond textual inclusion, and no separate compilation:
-the state of a checker is a symbol table that commands extend, and the meaning
-of a command depends on everything declared before it.
+the state includes a symbol table and scoped records of assumed and derived
+facts. The meaning of a command depends on what earlier commands made available.
 
 ### 1.1 Three file roles
 
@@ -135,7 +141,7 @@ them apart. There is no unevaluated `(eo::add 1 1)` for anything to hold.
 
 Typing is deliberately outside the pipeline. A term exists whether or not
 anything has asked for its type, and in general nothing does ask until a proof
-step needs it — see [chapter 8](#8-the-type-system).
+step needs it — see [§8.4](#84-where-term-typing-fits).
 
 ---
 
@@ -265,9 +271,10 @@ Plus two builtin declarations that behave as if a signature had made them:
 operators do not apply to it. It exists to be the return type of
 `eo::dt_constructors` and `eo::dt_selectors` ([§5.6](#56-datatype-operators)).
 
-Two further types, `Proof` and `Quote`, exist in the type system and cannot be
-named in a signature. They are what proof checking is made of; see
-[chapter 8](#8-the-type-system).
+Proof rules and named facts are introduced by the commands in
+[chapter 7](#7-proof-rules-and-proofs). The programs corresponding to rule
+declarations are described in
+[chapter 8](#8-proof-rules-as-programs).
 
 Everything else spelled `eo::` is an operator rather than a constant, and lives
 in [chapter 5](#5-evaluation).
@@ -352,7 +359,7 @@ stated type:
 > type checked at all — a body that cannot be typed is accepted silently and the
 > error surfaces at some later term that happens to ask. anoieu's `anoieu_analyzer/notes.md` §3
 > records the case. This is a direct consequence of typing being on demand
-> ([chapter 8](#8-the-type-system)) rather than a decision about `define`, but
+> ([§8.4](#84-where-term-typing-fits)) rather than a decision about `define`, but
 > the effect is that `:type` is the only thing standing between a signature and
 > an unchecked term, and it is optional.
 
@@ -1178,9 +1185,10 @@ so one rule covers every datatype a signature declares
 
 ## 6. Programs
 
-A **program** is an ordered list of rewrite rules. It is Eunoia's mechanism for
-side conditions: computation a proof rule needs, expressed in the language
-rather than assumed of the checker.
+A **program** is an ordered list of rewrite rules. Programs express computation
+in the language: side conditions, construction of conclusions and the proof
+rules themselves. `program` declares the general form; `declare-rule` provides
+the proof-specific interface described in [chapter 7](#7-proof-rules-and-proofs).
 
 ```smt
 (program <symbol> (<typed-param>*) :signature (<type>+) <type> ((<term> <term>)*)?)
@@ -1334,7 +1342,9 @@ signature with `eo::quote`:
 ```
 
 `(eo::quote n)` in argument position says: bind this argument to the parameter
-`n`, so that `n` may be used in the return type. Quoted and ordinary arguments
+`n`, so that `n` may be used in the return type. This is a binding annotation in
+the signature. The supplied argument must have the parameter's declared type
+when the application is type checked. Annotated and ordinary argument positions
 may be mixed freely, and the argument of `eo::quote` must be a parameter from
 the program's own parameter list.
 
@@ -1344,9 +1354,10 @@ the program's own parameter list.
   …)
 ```
 
-This is the same `Quote` that the type system uses for proof rule arguments
-([chapter 8](#8-the-type-system)); a dependent program and a proof rule are the
-same construction seen from two sides.
+This binds an argument for use in a computed return type. A proof rule's
+`:args` supplies patterns for its program: matching binds the terms used by its
+requirements and conclusion. [§8.2](#82-arguments-and-requirements) gives a rule
+and its corresponding program.
 
 The `eo::requires` in `repeat_zero` is doing real work: it guards the recursive
 case against a negative `n`, which would otherwise recurse forever. Termination
@@ -1358,9 +1369,11 @@ of programs is not checked by anything.
 
 ### 7.1 The shape of it
 
-A proof is a sequence of steps, each naming a rule, its premises and its
-arguments. Checking a step means finding a substitution that makes the rule's
-patterns fit what was supplied.
+A proof rule is a program with input patterns, requirements and a conclusion
+body. A proof supplies commands that run these programs using previously
+available facts. Checking a step means matching the inputs, evaluating the
+requirements and conclusion, and recording the resulting formula if the checks
+succeed.
 
 ```smt
 (declare-rule <symbol> (<typed-param>*)
@@ -1372,18 +1385,24 @@ patterns fit what was supplied.
    <attr>*)
 ```
 
-Applying a rule to concrete premises and arguments succeeds when there is a
-substitution `S` such that
+For an ordinary rule with `:conclusion`, execution finds a substitution `S` such
+that
 
 - each premise proof proves the corresponding premise pattern under `S`,
 - each supplied argument matches the corresponding argument pattern under `S`,
-- each requirement pair evaluates to the same term under `S`,
+- each requirement pair evaluates to the same fully reduced term under `S`.
 
-and the step then proves `S` applied to the conclusion.
+It then evaluates the conclusion under `S`. The result must be a fully reduced
+formula of type `Bool`, and must match the step's written conclusion if one was
+supplied. A rule with `:assumption` also matches the assumption being discharged;
+with `:conclusion-explicit`, it also matches the supplied conclusion as an input.
+[Chapter 8](#8-proof-rules-as-programs) shows the corresponding program.
 
-A rule is only well defined if every free parameter of its requirements and its
-conclusion also occurs in its arguments or premises — otherwise `S` does not
-determine what it proves.
+Every free parameter needed by the requirements and conclusion must be bound
+by an input pattern. Those patterns include arguments and premises, plus the
+assumption and explicit conclusion when present. This is the same restriction
+on free parameters as for a program case: the matched inputs must determine
+what its body computes.
 
 ```smt
 (declare-rule symm ((T Type) (t T) (s T))
@@ -1412,9 +1431,10 @@ It is exactly sugar for wrapping the conclusion:
     :conclusion (eo::requires (eo::is_neg x) true false))
 ```
 
-Which means requirements inherit `eo::requires`'s discipline: a failed
-requirement leaves a stuck term, and the step fails because what it proves is
-not what it claimed, not because anything raised an error.
+Requirements guard the program's conclusion body. They inherit `eo::requires`'s
+discipline: a failed requirement leaves a stuck term instead of a conclusion.
+The checker rejects that step even if no conclusion was written. The evaluator
+represents the failure by stuckness; executing the proof command reports it.
 
 ### 7.3 Premise lists
 
@@ -1434,8 +1454,9 @@ a variadic operator ([chapter 4](#4-application-sugar)).
 
 ### 7.4 Explicit conclusions
 
-`:conclusion-explicit <pattern>` inverts the direction: instead of computing
-what is proved, the rule matches against a conclusion the step *supplies*.
+`:conclusion-explicit <pattern>` makes the conclusion an additional input: the
+rule matches against a formula the step *supplies*. That match can bind
+parameters used by its requirements and conclusion body.
 
 ```smt
 (declare-rule split ((F Bool))
@@ -1444,40 +1465,49 @@ what is proved, the rule matches against a conclusion the step *supplies*.
 (step @p0 (or true (not true)) :rule split)
 ```
 
-A step using such a rule must give a conclusion, and the step is valid only if
-that conclusion matches. This is how a rule with a large or non-computable space
-of conclusions is written: let the proof say which one, and check it.
+A step using such a rule must give a conclusion. Its match must agree with the
+other input patterns, and all requirements must still pass. This is how a rule
+with a large or non-computable space of conclusions is written: let the proof
+say which one, and check it.
 
 ### 7.5 Proof commands, and local assumptions
 
 | | |
 | --- | --- |
-| `(assume <symbol> <term>)` | `<symbol>` is a proof of `<term>` |
-| `(step <symbol> <term>? :rule r :premises (…)? :args (…)?)` | apply `r`; if `<term>` is given, check that it is what was proved |
-| `(assume-push <symbol> <term>)` | as `assume`, but scoped |
-| `(step-pop <symbol> <term>? :rule r …)` | apply `r`, discharging the innermost pushed assumption |
+| `(assume <symbol> <term>)` | record `<term>` as an assumed fact named `<symbol>` |
+| `(step <symbol> <term>? :rule r :premises (…)? :args (…)?)` | run `r` and record its conclusion; if `<term>` is given, check that it matches |
+| `(assume-push <symbol> <term>)` | open a scope and record its local assumption |
+| `(step-pop <symbol> <term>? :rule r …)` | run `r`, discharge the innermost pushed assumption and record the conclusion outside that scope |
 
 `assume-push` and `step-pop` are how a rule with an `:assumption` field is used:
 the assumption is available as a proof inside the scope, and consumed when the
 scope closes.
 
 ```smt
+(declare-const => (-> Bool Bool Bool))
 (declare-rule implies-intro ((F Bool) (G Bool))
   :assumption F
   :premises (G)
   :conclusion (=> F G))
+
+(declare-rule contra ((G Bool))
+  :premises (false)
+  :args (G)
+  :conclusion G)
 
 (assume-push @p1 false)
 (step     @p2 true :rule contra :premises (@p1) :args (true))
 (step-pop @p3 (=> false true) :rule implies-intro :premises (@p2))
 ```
 
-After the `step-pop`, `@p1` is out of scope. Scopes nest.
+After the `step-pop`, both `@p1` and the local step `@p2` are out of scope;
+`@p3` is available in the enclosing scope. Scopes nest.
 
 Omitting the conclusion term from a `step` is allowed: the step then proves
-whatever the rule computes, unchecked against any stated intent. Supplying it
-is what turns a proof into something a reader can follow, and is required for
-`:conclusion-explicit` rules.
+whatever the rule computes. Matching, requirements, evaluation and the check
+that the result has type `Bool` still apply. Supplying a conclusion adds a check
+against the author's stated intent and is required for `:conclusion-explicit`
+rules.
 
 ### 7.6 A worked rule: splitting on a datatype
 
@@ -1509,9 +1539,9 @@ for every datatype in the signature:
 (step @p1 (or (is red y) (is green y) (is blue y)) :rule dt-split :args (y))
 ```
 
-The conclusion is not a term; it is a *computation* that produces one. This is
-the characteristic shape of a Eunoia proof rule, and the reason the evaluator
-exists.
+The conclusion body is a term containing a computation. Running the rule
+evaluates that body to the formula recorded by the step. This is the
+characteristic shape of a Eunoia proof rule, and the reason the evaluator exists.
 
 ### 7.7 `:sorry`, and what a checker answers
 
@@ -1537,117 +1567,214 @@ is off by default.
 
 ---
 
-## 8. The type system
+## 8. Proof rules as programs
 
-> **Correction, 2026-09-17.** This chapter opens by repeating the ethos manual's
-> framing — that proof checking is a special instance of type checking — which
-> this account took over rather than checked. We no longer think it is the right
-> account: checking a Eunoia proof is *running a program*, and the typed
-> presentation reaches neither `:assumption`, `:premise-list` nor
-> `:conclusion-explicit`, states a kind for `Proof` that is not enforced, and
-> hides the evaluator inside the `=` of its side conditions. The argument, with
-> what was run to establish it, is
-> [`docs/account-vs-manual.md` MD-01](account-vs-manual.md). **The chapter
-> below is accurate as a description of the typing rules and wrong as an
-> account of proof checking**; rewriting it around the state, the commands and
-> the match/evaluate/produce order — keeping the typed reading as the
-> explanation of dependency, which is what it is good for — is outstanding work.
+**A proof rule defines a program with one case.** The rule's premises and
+arguments become the case's input patterns, its requirements guard the body,
+and its conclusion is the term the body computes. This is the account of rules
+as programs in [the Ethos paper, §3](https://doi.org/10.1007/978-3-032-32589-1_19).
 
-Everything in [chapter 7](#7-proof-rules-and-proofs) is notation. Underneath,
-**a proof is a term and proof checking is type checking**, in a type system with
-two types a signature cannot name:
+### 8.1 A rule and its program
 
-| | |
-| --- | --- |
-| `Proof` | of kind `(-> Bool Type)`. `(Proof F)` is the type of proofs of `F` |
-| `Quote` | marks an argument position whose *term* is bound, not just its type |
-
-Taking `t : S` as an axiom for every atomic term declared with type `S`, the
-whole of application typing is two rules:
-
-```
-    f : (-> U S)        t : T
-    ─────────────────────────────  if U·σ = T,  U not a Quote
-        (f t) : S·σ
-
-    f : (-> (Quote u) S)     t : T
-    ──────────────────────────────  if u·σ = t
-        (f t) : S·σ
-```
-
-The first is ordinary dependent application: match the argument's *type* against
-the expected one and carry the substitution into the result type. The second is
-what makes dependent types usable in practice: match the argument *term* against
-a pattern, so the result type can mention the argument itself. `eo::quote` in a
-program signature ([§6.4](#64-dependent-programs-eoquote)) is this rule, and so
-is a proof rule's `:args`.
-
-**One further condition, and it is the one that bites.** A term is well-typed
-only if its type is either non-ground, or fully reduced — containing no stuck
-application of a program or a computational operator.
+The contradiction rule has two premises and concludes `false`:
 
 ```smt
+(declare-const not (-> Bool Bool))
+(declare-rule contra ((F Bool))
+  :premises (F (not F))
+  :conclusion false)
+```
+
+To write its corresponding program as ordinary Eunoia, introduce a type for
+premise values and a constructor that carries the formula established by a
+premise:
+
+```smt
+(declare-const Proof Type)
+(declare-const pf (-> Bool Proof))
+```
+
+These are explanatory declarations; Ethos uses internal counterparts named
+`eo::Proof` and `eo::pf`. Every `(pf F)` has the same type `Proof`; the formula
+`F` is its child. With those names, the rule's program is:
+
+```smt
+(program $eo_prog_contra ((F Bool))
+  :signature (Proof Proof) Bool
+  (
+    (($eo_prog_contra (pf F) (pf (not F))) false)
+  ))
+```
+
+The pattern binds `F` from the first premise and requires the second premise to
+contain exactly `(not F)`. For a declared Boolean constant `p`:
+
+```text
+($eo_prog_contra (pf p) (pf (not p))) == false
+($eo_prog_contra (pf p) (pf p))      == itself   ; no matching case
+```
+
+The result is the conclusion formula `false`. A successful rule application
+supplies `(pf false)` for use as a premise of another rule. The rule program
+computes the formula; the proof command supplies the premise wrapper. The
+explanatory `pf` declaration makes this representation visible but does not
+authorize a proof step to invent premises.
+
+### 8.2 Arguments and requirements
+
+This rule selects either conjunct of its premise. Its explicit argument `H`
+names the conjunct to select, and its requirement checks that selection:
+
+```smt
+(declare-const and (-> Bool Bool Bool))
+(declare-rule and-select ((F Bool) (G Bool) (H Bool))
+  :premises ((and F G))
+  :args (H)
+  :requires (((eo::or (eo::is_eq H F) (eo::is_eq H G)) true))
+  :conclusion H)
+```
+
+Using the declarations of `Proof` and `pf` above, its program is:
+
+```smt
+(program $eo_prog_and-select ((A Type) (F Bool) (G Bool) (H Bool))
+  :signature (A Proof) Bool
+  (
+    (($eo_prog_and-select H (pf (and F G)))
+      (eo::requires (eo::or (eo::is_eq H F) (eo::is_eq H G)) true H))
+  ))
+```
+
+The explicit argument comes first, followed by the premise. Matching binds
+`H`, `F` and `G`; the body compares `H` with each conjunct and returns it when
+one comparison succeeds. With distinct declared Boolean constants `p`, `q`
+and `r`:
+
+```text
+($eo_prog_and-select p (pf (and p q))) == p
+($eo_prog_and-select q (pf (and p q))) == q
+($eo_prog_and-select r (pf (and p q))) == (eo::requires false true r)
+```
+
+The last application matches the input pattern but gets stuck in the
+requirement. In the first example of §8.1, a failed premise match leaves the
+whole application stuck. Both failures follow the evaluation rules for
+ordinary programs.
+
+`A` is a fresh type parameter for the explicit input. Ethos gives non-premise
+inputs such type parameters because rule patterns need not have statically
+checkable types. Matching is structural; the rule's declared parameter types
+do not add type tests to its body. The computed conclusion is checked to have
+type `Bool` when the rule is used, as described in
+[§8.4](#84-where-term-typing-fits).
+
+### 8.3 Translating a declaration
+
+The correspondence follows Ethos's
+[`declare-rule` translation](https://github.com/cvc5/ethos/blob/39f2f90c0c93b7b71e327c3c8e524b9da039d45b/src/cmd_parser.cpp#L385-L560).
+For a rule `r`, form one case of a program named `$eo_prog_r`:
+
+| part of the declaration | part of the program |
+| --- | --- |
+| parameter list | the parameters available in the case's patterns and body |
+| `:args (a1 … am)` | the first input patterns, `a1 … am` |
+| `:conclusion-explicit c` | an additional input pattern `c`, after the explicit arguments |
+| `:assumption h` | an additional input pattern `h`, after the explicit conclusion if present |
+| `:premises (p1 … pn)` | the final input patterns, `(pf p1) … (pf pn)` |
+| `:premise-list p op` | one final input pattern `(pf p)`; combine the supplied premises' formulas with `op` before passing them to the program |
+| `:requires ((u1 v1) … (uk vk))` | wrap the conclusion body in nested `eo::requires` applications, with the first pair outermost |
+| `:conclusion c` or `:conclusion-explicit c` | the conclusion body `c`, under the requirement guards |
+
+The program's signature has one fresh type parameter for each non-premise
+input, `Proof` for each premise input, and return type `Bool`. Patterns have
+the same restrictions as program cases in [§6.2](#62-patterns): they must be
+matchable, and together must bind every parameter used in the body. Repeated
+parameters must match the same term.
+
+For example, the program for `implies-intro` in
+[§7.5](#75-proof-commands-and-local-assumptions) has the single case
+`(($eo_prog_implies-intro F (pf G)) (=> F G))`: the discharged assumption is
+an ordinary input, followed by the premise value. The `split` rule in
+[§7.4](#74-explicit-conclusions) has the single case
+`(($eo_prog_split (or F (not F))) (or F (not F)))`, with the supplied conclusion
+as its input.
+
+For `:premise-list`, premises establishing `F1 … Fn` supply the one input
+`(pf (op F1 … Fn))`, using `op`'s application sugar. With no premises, that
+input is `(pf nil)`, where `nil` is the operator's nil terminator; an operator
+without one cannot collect an empty premise list.
+
+A rule with no input patterns has a precomputed conclusion in place of a
+program application. Its requirement-guarded body must be ground and fully
+reduced at declaration time.
+
+A step accepts a fully reduced result of type `Bool` and, if a conclusion was
+written, compares the result with it. With `:conclusion-explicit`, the written
+conclusion also participates in matching. With ordinary `:conclusion`, it
+supplies no parameter bindings. Omitting it leaves all requirements and the
+check on the computed result in force.
+
+### 8.4 Where term typing fits
+
+Eunoia has term types: declarations assign types, applications use them,
+and assumed or computed formulas must have type `Bool`. Having type `Bool`
+does not establish a formula. For example, `false` is a well-typed term before
+any command establishes it, and a rule that produces `false` successfully has
+produced a conclusion, not a checker failure.
+
+For an ordinary function application, match the argument's type against the
+expected type and evaluate the result type with the resulting substitution:
+
+```text
+    f : (-> U R)        t : T
+    ─────────────────────────────  Uσ = T
+         (f t) : eval(Rσ)
+```
+
+Named dependent arguments also bind the supplied *term*, allowing later types
+to mention its value ([§3.3](#33-declare-parameterized-const)). In a program
+signature, `eo::quote` marks this binding explicitly
+([§6.4](#64-dependent-programs-eoquote)); the argument's type is checked against
+the named parameter's declared type.
+
+**Computed types must finish evaluating when ground.** A type may contain
+parameters, but a ground type may not contain a stuck computation. For example:
+
+```smt
+(declare-const Int Type)
+(declare-consts <numeral> Int)
+(declare-const BitVec (-> Int Type))
+(declare-parameterized-const concat ((m Int :implicit) (n Int :implicit))
+  (-> (BitVec m) (BitVec n) (BitVec (eo::add m n))))
 (declare-const x (BitVec 2))
 (declare-const y (BitVec 3))
-(define z () (concat x y) :type (BitVec 5))     ; (BitVec (eo::add 2 3)) reduces
-
-(declare-const a Int) (declare-const b Int)
-(declare-const x2 (BitVec a)) (declare-const y2 (BitVec b))
-(define z2 () (concat x2 y2))                   ; type error
+(define z () (concat x y) :type (BitVec 5))
 ```
 
-`z2`'s type is `(BitVec (eo::add a b))`. `a` and `b` are declared constants, so
-the type is ground; `eo::add` is stuck on them, so it is not reduced; so the
-term is ill-typed. Had `a` and `b` been *parameters*, the type would be
-non-ground and the term would be fine. This is why computational type rules work
-inside a program or a rule and not at the top level.
-
-### 8.1 The proof commands as sugar
+The type computation substitutes `2` and `3`, then reduces
+`(BitVec (eo::add 2 3))` to `(BitVec 5)`. With declared constants instead:
 
 ```smt
-(declare-rule s ((v1 T1) … (vi Ti))
-    :premises (p1 … pn) :args (t1 … tm)
-    :requires ((r1 s1) … (rk sk)) :conclusion t)
+(declare-const a Int)
+(declare-const b Int)
+(declare-const x2 (BitVec a))
+(declare-const y2 (BitVec b))
+(define z2 () (concat x2 y2))                  ; no type check requested
+(define checked_z2 () z2 :type (BitVec 5))     ; rejected when typing is requested
 ```
 
-is
+The computed type would be `(BitVec (eo::add a b))`. It is ground, but `eo::add`
+cannot compute on the declared constants `a` and `b`, so type checking fails.
+With parameters in those positions, the computation can remain pending until
+they are bound. Ethos checks types on demand, so the unchecked `define z2`
+alone does not report the failure.
 
-```smt
-(declare-parameterized-const s ((v1 T1 :implicit) … (vi Ti :implicit))
-    (-> (Quote t1) … (Quote tm)
-        (Proof p1) … (Proof pn)
-        (eo::requires r1 s1 … (eo::requires rk sk
-            (Proof t)))))
-```
-
-and correspondingly
-
-```smt
-(assume s f)                    ≡  (declare-const s (Proof f))
-(step s f :rule r :premises (p1 … pn) :args (t1 … tm))
-                                ≡  (define s () (r t1 … tm p1 … pn) :type (Proof f))
-```
-
-with the `:type` omitted when the step gives no conclusion. Reading these three
-lines is the fastest way to understand the proof layer:
-
-- **A rule is a constant.** Its arguments are `Quote`d so the conclusion can
-  mention them; its premises are ordinary arguments whose types are `Proof`s.
-- **Requirements are `eo::requires` in the return type.** A failed requirement
-  leaves the return type stuck, so the `define`'s `:type` check fails.
-- **A step is a `define` with `:type`** — which is why a step's optional
-  conclusion is exactly the optional `:type` of [§3.2](#32-define-is-a-macro),
-  and why omitting it means nothing is checked.
-- **Matching premises against patterns is unification of `Proof` types**, not a
-  separate mechanism.
-
-The correspondence assumes a rule with neither `:assumption` nor
-`:premise-list`; those two need scope tracking that the sugar does not express.
-
-> **Unsettled.** The manual writes the quoted argument type as `(-> (Quote u) S)`
-> in the appendix and as a distinct "quote arrow" `(~> T T)` in a note earlier
-> on. Whether these are two notations for one thing, or `~>` is a separate
-> constructor, is not stated. A formalization has to pick.
+The distinction also applies to rules. Their requirements and conclusions are
+program bodies, not a static guarantee that every execution will succeed.
+Pattern matching binds terms structurally; it does not in itself check every
+binding against a parameter's declared type. The checker validates the formula
+actually produced by a step. Questions about additional checks on declarations
+remain in [chapter 11](#11-where-the-language-is-unsettled).
 
 ---
 
@@ -1841,9 +1968,6 @@ body by anything. Capture and freshness have no account in the language.
 **Discriminators and updaters.** [§3.6](#36-datatypes). Named as products of
 `declare-datatype` and then never described.
 
-**`Quote` versus `~>`.** [§8.1](#81-the-proof-commands-as-sugar). Two notations,
-one thing or two, unstated.
-
 ---
 
 ## What this account leaves out on purpose
@@ -1859,3 +1983,10 @@ Not gaps — deliberate exclusions, listed so a reader can tell the two apart.
 | the case for the ecosystem's arrangement | kanon's `tools/ynoia/docs/why-eunoia.md`; out of charter |
 | proposed changes to Eunoia | a person's report to the language's maintainers |
 | the derived-operator signature reconstructing the list operators in pure Eunoia | the manual's appendix, which is the right place for it |
+
+## References
+
+Andrew Reynolds, Hans-Jörg Schurr, Mallku Soldevila, Haniel Barbosa, Clark
+Barrett and Cesare Tinelli.
+[Ethos: A Fast Proof Checker for the Eunoia Logical Framework](https://doi.org/10.1007/978-3-032-32589-1_19).
+In *Automated Reasoning (IJCAR 2026)*, LNCS 16688, pp. 305–314. Springer, 2026.
