@@ -1,9 +1,20 @@
 #!/usr/bin/env python3
-"""Format Eunoia (.eo) files.
+"""Format Eunoia (.eo) and Eunoia semantics (.eos) files.
 
 The formatter is intentionally small and syntax-directed.  It parses Eunoia as
 S-expressions, keeps comments as nodes, uses 2-space indentation, and gives
 program bodies special treatment so one-line cases align their returns.
+
+The two languages quote strings differently and are lexed differently as a
+result.  In `.eo` a doubled quote is the escape and a backslash is an ordinary
+character; in `.eos` a backslash escapes the character after it and a doubled
+quote is two strings.  `DIALECTS` records both, `dialect_for` picks one from a
+file's suffix, and nothing else in the formatter looks at the difference.
+
+Rewriting a file may not lose any of it, so `verify_reformat` compares the
+formatted text with the original token by token and refuses a result that has
+dropped or invented anything.  It is a safety net for the layout rules below,
+not a substitute for them.
 """
 
 from __future__ import annotations
@@ -48,10 +59,28 @@ class FormatError(Exception):
     pass
 
 
+# How a dialect writes a quote inside a string literal.  `eo` follows SMT-LIB
+# 2.6, which ethos's lexer implements: `""` stands for one quote and a
+# backslash is an ordinary character.  `eos` is the compiler's own reader,
+# which escapes with a backslash and ends a string at the first lone quote.
+DIALECTS = ("eo", "eos")
+
+_SUFFIX_DIALECT = {".eos": "eos", ".eo": "eo"}
+
+
+def dialect_for(path: Path) -> str:
+    """The dialect a file is read in, from its suffix.  Anything else is `.eo`,
+    which is what an extensionless file reached by `include` is."""
+    return _SUFFIX_DIALECT.get(path.suffix, "eo")
+
+
 class Lexer:
-    def __init__(self, text: str, name: str) -> None:
+    def __init__(self, text: str, name: str, dialect: str = "eo") -> None:
+        if dialect not in DIALECTS:
+            raise FormatError(f"unknown dialect: {dialect}")
         self.text = text
         self.name = name
+        self.dialect = dialect
         self.pos = 0
         self.line = 1
         self.col = 0
@@ -122,8 +151,19 @@ class Lexer:
         while not self._eof():
             ch = self._advance()
             chars.append(ch)
+            if ch == "\\" and self.dialect == "eos":
+                # The backslash takes the next character as it is written,
+                # which is what lets a `:lean-impl` body hold its own strings.
+                if self._eof():
+                    break
+                chars.append(self._advance())
+                continue
             if ch == '"':
-                if not self._eof() and self._peek() == '"':
+                if (
+                    self.dialect == "eo"
+                    and not self._eof()
+                    and self._peek() == '"'
+                ):
                     chars.append(self._advance())
                     continue
                 return "".join(chars)
@@ -285,11 +325,17 @@ class Formatter:
             if self.line_width(lines[-1] + trailing) <= self.width:
                 lines[-1] += trailing
                 return
+            # It does not fit, so it goes on a line of its own above the form
+            # it was written after.  Two things have to hold or the file does
+            # not survive a second run unchanged.  It may not pass a comment
+            # written before it, which is how a later trailing comment used to
+            # end up above an earlier one.  And it lines up with the form it
+            # now stands above, since that is where the next run finds it and
+            # that is the indentation the next run gives it.
             target = insert_before if insert_before is not None else len(lines) - 1
-            # Skip past comments already moved to this location so repeated
-            # inserts keep their original relative order instead of reversing.
-            while target < len(lines) and lines[target].lstrip().startswith(";"):
-                target += 1
+            written = self.last_comment_line(lines, target)
+            if written is not None:
+                target = written + 1
             indent_ref = target if target < len(lines) else len(lines) - 1
             lines[target:target] = self.format_comment_with_indent(
                 node, self.leading_whitespace(lines[indent_ref])
@@ -299,6 +345,13 @@ class Formatter:
 
     def leading_whitespace(self, text: str) -> str:
         return text[: len(text) - len(text.lstrip(" \t"))]
+
+    def last_comment_line(self, lines: list[str], since: int) -> Optional[int]:
+        """The last line from `since` on that already carries a comment."""
+        for idx in range(len(lines) - 1, max(since, 0) - 1, -1):
+            if self.trailing_comment_index(lines[idx]) is not None:
+                return idx
+        return None
 
     def format_program(self, node: Node, level: int) -> list[str]:
         flat = self.flat(node)
@@ -317,6 +370,18 @@ class Formatter:
 
         lines: list[str] = []
         positions = {id(child): idx for idx, child in enumerate(children)}
+
+        # The layout below puts the signature on one line, which leaves nowhere
+        # for a comment standing inside it, and it names the parts rather than
+        # walking the children, which leaves nowhere for one standing before
+        # the name.  The general list layout has somewhere for both.
+        unplaceable = (
+            children[: positions[id(name)]]
+            + children[positions[id(sig_keyword)] + 1 : positions[id(arg_types)]]
+            + children[positions[id(arg_types)] + 1 : positions[id(ret_type)]]
+        )
+        if any(child.is_comment() for child in unplaceable):
+            return self.format_list(node, level)
 
         def emit_comments_between(start: int, end: int, insert_before: int) -> None:
             for child in children[start:end]:
@@ -425,7 +490,7 @@ class Formatter:
                 info[idx] = None
                 continue
             parts = self.non_comment_children(child)
-            if len(parts) != 2:
+            if len(parts) != 2 or len(child.children or []) != 2:
                 info[idx] = None
                 continue
             pattern = self.flat(parts[0])
@@ -538,16 +603,30 @@ class Formatter:
         return prefix + (" " * spaces) + ret + ")"
 
     def format_multiline_case(self, case: Node, case_level: int) -> list[str]:
+        children = case.children or []
         parts = self.non_comment_children(case)
         if len(parts) != 2:
             return self.format_list(case, case_level)
         pattern, ret = parts
+        positions = {id(child): idx for idx, child in enumerate(children)}
+        first, last = positions[id(pattern)], positions[id(ret)]
+        # A comment before the pattern would have to go before the `(` that the
+        # pattern opens, and one after the return before the `)` that closes the
+        # case; neither has a place here, so the general list layout takes them.
+        outside = children[:first] + children[last + 1 :]
+        if any(child.is_comment() for child in outside):
+            return self.format_list(case, case_level)
         lines = self.format_node_with_prefix(
             pattern, self.indent(case_level) + "(", case_level + 1
         )
-        ret_lines = self.format_node(ret, case_level + 1)
-        lines.extend(ret_lines)
-        self.append_suffix(lines, ")", case_level)
+        pattern_start = 0
+        for child in children[first + 1 : last]:
+            self.emit_comment(lines, child, case_level + 1, pattern_start)
+        lines.extend(self.format_node(ret, case_level + 1))
+        if lines[-1].lstrip().startswith(";"):
+            lines.append(self.indent(case_level) + ")")
+        else:
+            self.append_suffix(lines, ")", case_level)
         return lines
 
     def format_list(self, node: Node, level: int) -> list[str]:
@@ -623,13 +702,19 @@ class Formatter:
         prefix = self.indent(level) + "(" + head + " "
         lines = self.format_node_with_prefix(children[1], prefix, child_level)
         last_child_start = 0
-        for child in children[2:]:
-            next_level = self.head_child_level(head, child, level)
+        for idx, child in enumerate(children[2:], start=2):
             if child.is_comment():
-                self.emit_comment(lines, child, next_level, last_child_start)
+                self.emit_comment(
+                    lines,
+                    child,
+                    self.comment_child_level(head, children, idx, level),
+                    last_child_start,
+                )
             else:
                 last_child_start = len(lines)
-                lines.extend(self.format_node(child, next_level))
+                lines.extend(
+                    self.format_node(child, self.head_child_level(head, child, level))
+                )
         if lines[-1].lstrip().startswith(";"):
             lines.append(self.indent(level) + ")")
         else:
@@ -639,6 +724,16 @@ class Formatter:
     def head_child_level(self, head: str, child: Node, level: int) -> int:
         if head == "eo::define" and self.is_call(child, "eo::define"):
             return level
+        return level + 1
+
+    def comment_child_level(
+        self, head: str, children: list[Node], idx: int, level: int
+    ) -> int:
+        """Where a comment standing between two children goes: level with the
+        next form, since that is the one it is written above."""
+        for child in children[idx + 1 :]:
+            if not child.is_comment():
+                return self.head_child_level(head, child, level)
         return level + 1
 
     def is_call(self, node: Node, head: str) -> bool:
@@ -947,18 +1042,30 @@ class Formatter:
         return value if value % 2 == 0 else value + 1
 
 
-def parse_eunoia(text: str, name: str) -> list[Node]:
-    return Parser(Lexer(text, name).tokenize(), name).parse()
+def parse_eunoia(text: str, name: str, dialect: str = "eo") -> list[Node]:
+    return Parser(Lexer(text, name, dialect).tokenize(), name).parse()
 
 
-def decode_eunoia_string(text: str) -> Optional[str]:
+def decode_eunoia_string(text: str, dialect: str = "eo") -> Optional[str]:
+    """What a string literal stands for, in the dialect it was written in."""
     if len(text) < 2 or not (text.startswith('"') and text.endswith('"')):
         return None
     result: list[str] = []
     i = 1
     while i < len(text) - 1:
         ch = text[i]
-        if ch == '"' and i + 1 < len(text) - 1 and text[i + 1] == '"':
+        if dialect == "eos" and ch == "\\" and i + 1 < len(text) - 1:
+            # Only a backslash and a quote are given a meaning; a backslash
+            # before anything else is that backslash.
+            nxt = text[i + 1]
+            result.append(nxt if nxt in '\\"' else ch + nxt)
+            i += 2
+        elif (
+            dialect == "eo"
+            and ch == '"'
+            and i + 1 < len(text) - 1
+            and text[i + 1] == '"'
+        ):
             result.append('"')
             i += 2
         else:
@@ -967,7 +1074,7 @@ def decode_eunoia_string(text: str) -> Optional[str]:
     return "".join(result)
 
 
-def iter_include_paths(nodes: Iterable[Node]) -> Iterable[str]:
+def iter_include_paths(nodes: Iterable[Node], dialect: str = "eo") -> Iterable[str]:
     for node in nodes:
         if not node.is_list():
             continue
@@ -978,7 +1085,7 @@ def iter_include_paths(nodes: Iterable[Node]) -> Iterable[str]:
             continue
         if not children[1].is_atom():
             continue
-        path = decode_eunoia_string(children[1].text)
+        path = decode_eunoia_string(children[1].text, dialect)
         if path is not None:
             yield path
 
@@ -987,7 +1094,9 @@ def should_format_include(path: Path) -> bool:
     return path.suffix == ".eo" or path.suffix == ""
 
 
-def collect_files(paths: list[Path], recursive: bool) -> list[Path]:
+def collect_files(
+    paths: list[Path], recursive: bool, dialect: Optional[str] = None
+) -> list[Path]:
     ordered: list[Path] = []
     seen: set[Path] = set()
 
@@ -999,9 +1108,10 @@ def collect_files(paths: list[Path], recursive: bool) -> list[Path]:
         if not resolved.exists():
             raise FormatError(f"{path}: file does not exist")
         text = resolved.read_text(encoding="utf-8")
-        nodes = parse_eunoia(text, str(resolved))
+        this = dialect or dialect_for(resolved)
+        nodes = parse_eunoia(text, str(resolved), this)
         if recursive:
-            for include in iter_include_paths(nodes):
+            for include in iter_include_paths(nodes, this):
                 include_path = Path(include)
                 if not include_path.is_absolute():
                     include_path = resolved.parent / include_path
@@ -1019,10 +1129,86 @@ def collect_files(paths: list[Path], recursive: bool) -> list[Path]:
     return ordered
 
 
-def format_file(path: Path, formatter: Formatter) -> tuple[str, str]:
+def code_tokens(text: str, name: str, dialect: str) -> list[tuple[str, str]]:
+    """Everything but the comments, which is what layout may not change."""
+    return [
+        (token.kind, token.text)
+        for token in Lexer(text, name, dialect).tokenize()
+        if token.kind != "comment"
+    ]
+
+
+def comment_words(text: str, name: str, dialect: str) -> list[str]:
+    """Every word of every comment, in order.  Comments are re-wrapped, so the
+    words survive a reformat and the lines they sit on do not."""
+    return [
+        word
+        for token in Lexer(text, name, dialect).tokenize()
+        if token.kind == "comment"
+        for word in token.text.lstrip(";").split()
+    ]
+
+
+def verify_reformat(original: str, formatted: str, name: str, dialect: str) -> None:
+    """Refuse a result that dropped or invented anything.
+
+    The formatter rewrites files in place, so a layout rule that quietly
+    swallows a comment destroys the only copy.  This reads the output back and
+    compares it with the input; a mismatch is the formatter's defect and is
+    raised as one rather than written to disk.
+    """
+    try:
+        after_code = code_tokens(formatted, name, dialect)
+        after_words = comment_words(formatted, name, dialect)
+    except FormatError as err:
+        raise FormatError(f"{name}: the formatted text does not lex: {err}") from err
+    before_code = code_tokens(original, name, dialect)
+    if before_code != after_code:
+        raise FormatError(
+            f"{name}: internal error, formatting changed the file's tokens "
+            f"({len(before_code)} before, {len(after_code)} after)"
+        )
+    before_words = comment_words(original, name, dialect)
+    if before_words != after_words:
+        raise FormatError(
+            f"{name}: internal error, formatting changed the file's comments "
+            f"({len(before_words)} words before, {len(after_words)} after)"
+        )
+
+
+#: How many passes a file gets to settle.  A comment that does not fit on the
+#: line it was written after moves onto a line of its own, which can leave the
+#: form it came from short enough to fit on one -- so one pass is not always a
+#: fixed point, and the second is.  The bound is here to turn a rule that
+#: oscillates into an error instead of a hang.
+SETTLE_PASSES = 8
+
+
+def format_text(
+    text: str, name: str, formatter: Formatter, dialect: str = "eo"
+) -> str:
+    """Format until the result stops changing, so running the formatter twice
+    says the same thing as running it once.  `--check` is only worth having if
+    a file it has just written passes it."""
+    current = text
+    for _ in range(SETTLE_PASSES):
+        nxt = formatter.format_document(parse_eunoia(current, name, dialect))
+        if nxt == current:
+            verify_reformat(text, current, name, dialect)
+            return current
+        current = nxt
+    raise FormatError(
+        f"{name}: internal error, the layout did not settle in "
+        f"{SETTLE_PASSES} passes"
+    )
+
+
+def format_file(
+    path: Path, formatter: Formatter, dialect: Optional[str] = None
+) -> tuple[str, str]:
     original = path.read_text(encoding="utf-8")
-    formatted = formatter.format_document(parse_eunoia(original, str(path)))
-    return original, formatted
+    this = dialect or dialect_for(path)
+    return original, format_text(original, str(path), formatter, this)
 
 
 def unified_diff(path: Path, original: str, formatted: str) -> str:
@@ -1047,6 +1233,13 @@ def main(argv: Optional[list[str]] = None) -> int:
         help="number of spaces per indentation level",
     )
     parser.add_argument(
+        "--dialect",
+        choices=[*DIALECTS, "auto"],
+        default="auto",
+        help="which language to read the files as; auto reads .eos as eos "
+        "and everything else as eo",
+    )
+    parser.add_argument(
         "--no-recursive",
         action="store_false",
         dest="recursive",
@@ -1065,11 +1258,12 @@ def main(argv: Optional[list[str]] = None) -> int:
     args = parser.parse_args(argv)
 
     formatter = Formatter(args.width, "spaces", args.indent_size)
+    dialect = None if args.dialect == "auto" else args.dialect
     try:
-        files = collect_files(args.files, args.recursive)
+        files = collect_files(args.files, args.recursive, dialect)
         changed: list[Path] = []
         for path in files:
-            original, formatted = format_file(path, formatter)
+            original, formatted = format_file(path, formatter, dialect)
             if original == formatted:
                 continue
             changed.append(path)

@@ -1,0 +1,6 @@
+; In .eo a doubled quote is the escape and a backslash is an ordinary character.
+(define $quoted () "he said ""no"" twice")
+
+(define $backslash () "a\b")
+
+(define $empty () "")

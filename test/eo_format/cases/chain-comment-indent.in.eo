@@ -1,0 +1,8 @@
+(declare-rule concat_cprop ((t (Seq U)) (s (Seq U)))
+  :premises ((= t s))
+  :conclusion
+    (eo::define ((tn ($str_to_nary_form t false)))
+    (eo::define ((t1 ($str_head tn)))
+    (eo::define ((r (eo::find (eo::to_str t1) (eo::to_str tn)))) ; the overlap of the two sides, plus one
+      (= t1 r))))
+)

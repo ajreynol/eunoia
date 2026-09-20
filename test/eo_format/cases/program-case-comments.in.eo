@@ -1,0 +1,9 @@
+(program $consume ((s String) (r RegLan))
+  :signature (String RegLan) Bool
+  (
+  (($consume s (re.* r))
+    ; only process in a single direction
+    (eo::define ((res ($consume_once s r true))) (eo::ite (eo::eq res false) false res)))
+  (($consume s r) ($consume_once s r false))
+  )
+)

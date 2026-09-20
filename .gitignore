@@ -1,0 +1,7 @@
+# Working space, and it is untracked.
+scratch/
+*.local.md
+
+# Python leaves these beside the formatter when the tests import it.
+__pycache__/
+*.pyc

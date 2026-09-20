@@ -59,6 +59,15 @@ synchronization between the two. This responsibility covers the `.eos`
 language, while each project maintains its own semantics sets and compiler
 code.
 
+**Where the reference is thinner than the language.** The import says nothing
+the source did not, so a rule the source left out is left out here too until
+somebody writes it. The first one found is how a string literal escapes a
+quote, which `.eos` and `.eo` do in opposite ways;
+[`docs/eos.md`](docs/eos.md) §2 now records what the compiler's reader does, at
+a named revision, and whether that is the language is
+[the parent's `D1`](../../docs/discussion.md) and is not settled here. Owning
+the reference does not make a question about the language ours to answer.
+
 ## Research goals, in order
 
 1. **The account.** A description of Eunoia written as a language definition:
@@ -137,7 +146,7 @@ subject, since describing the language is the whole of what it is for. Three
 inheritances, each of which must be cited where it is used:
 
 - **Verified behaviour.** anoieu's
-  [`docs/notes.md`](https://github.com/ajreynol/anoieu/blob/main/docs/notes.md)
+  [`anoieu_analyzer/notes.md`](https://github.com/ajreynol/anoieu/blob/main/anoieu_analyzer/notes.md)
   §3 records six behaviours checked against a real ethos build on `ethosEoc3` —
   a rule concluding a non-`Bool` term, a dormant program case with the wrong
   return type, an unchecked `define` body, a mistyped nil terminator, a
@@ -146,12 +155,12 @@ inheritances, each of which must be cited where it is used:
   behaviour come apart, and each is a place this account has to say which one
   is the language.
 
-- **The unsettled list.** anoieu's `docs/notes.md` §4 is a list of questions
+- **The unsettled list.** anoieu's `anoieu_analyzer/notes.md` §4 is a list of questions
   where the current answer is "whatever the implementation does". They are
   reproduced in this account's closing chapter rather than resolved, because
   resolving them is a language change and that is out of scope.
 
-- **The reading itself.** anoieu's `docs/notes.md` §1 is the shape of `.eo` as
+- **The reading itself.** anoieu's `anoieu_analyzer/notes.md` §1 is the shape of `.eo` as
   the analyzer's front end had to model it, which is a second reading of the
   same manual made for a different purpose, and disagreements between it and
   this one are worth chasing.
@@ -178,6 +187,11 @@ convention.
 documentation and maintained here by the human maintainer's assignment.
 [`docs/eos.md`](docs/eos.md) records the source revision and the scope of the
 import. This replaces the former charter exclusion of `.eos`.
+
+**First maintained addition, 2026-09-19:** §2 gains the escaping rule for a
+string literal, read off the compiler's own reader rather than off any
+statement of the language, and the `.eo` account gains the rule the ethos
+manual already states. Everything else on the page is still the import.
 
 **First cut, drafted 2026-08-31.** Read against `user_manual.md` at `ethosEoc3`
 (`3cf1c03`). Every chapter exists; the ones on desugaring, evaluation and the
@@ -210,7 +224,10 @@ answered; an unfiled disagreement is one project's opinion of another's prose.
 this account, with the answers that came back. The ledger is the raw material and
 is currently fifteen rows that have gone nowhere.
 
-Stated because the shared
-[`policy.md`](https://github.com/ajreynol/kanon/blob/main/docs/policy.md) asks
-every child project to say whether a paper exists for it, what the plan is, or
-that there is nothing in it worth writing up. This is the second answer.
+Stated because it is worth stating, and not because anything asks for it: the
+shared [`policy.md`](https://github.com/ajreynol/kanon/blob/main/docs/policy.md)
+asks nothing here, and kanon's
+[`tools/ynoia/docs/papers.md`](https://github.com/ajreynol/kanon/blob/main/tools/ynoia/docs/papers.md),
+which collects the judgement one tool at a time, says so itself and says that a
+project's own stance settles the question for that project. This is ours, and
+it is the middle one of the three: not yet, and here is what would change it.

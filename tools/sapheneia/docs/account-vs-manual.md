@@ -182,7 +182,8 @@ A program case with the wrong return type is accepted and lies dormant until a
 proof reaches it. And overload resolution takes "the most recently declared
 symbol that results in a well-typed term", so what a name denotes depends on
 declaration order. anoieu reached the same place from the analyzer side and put
-it in one sentence — its `docs/notes.md` §1, *"Ethos is demand-driven:
+it in one sentence — its `anoieu_analyzer/notes.md`, under *What ethos misses,
+and why*: *"Ethos is demand-driven:
 it types a term only when something asks"*, and *"a signature is not a thing it
 validates; it is the vocabulary a proof is checked against"*.
 

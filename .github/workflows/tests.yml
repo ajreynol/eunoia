@@ -1,0 +1,22 @@
+name: tests
+
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  eo_format:
+    # Green means: the formatter produced every expected output in
+    # test/eo_format/cases, and every one of them kept the code tokens and the
+    # comments of the file it came from and did not change on a second pass.
+    # It says nothing about the corpus in other repositories, which
+    # test/corpus.py measures and CI cannot reach.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: the formatter's own cases
+        run: python3 test/run.py

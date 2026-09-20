@@ -1,0 +1,5 @@
+; Two trailing comments, neither of which fits on the line it was written on.
+(define $dt_is_cons ((T Type :implicit) (t T))
+  ; tuple has no selectors, so it must be checked first of all
+  ; if it has selectors, then it is a constructor symbol
+  (eo::ite (eo::is_eq t tuple) true (eo::is_ok (eo::dt_selectors t))))

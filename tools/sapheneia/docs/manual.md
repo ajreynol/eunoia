@@ -350,7 +350,7 @@ stated type:
 
 > **Implementation. [verified]** Without `:type`, an Ethos `define` body is not
 > type checked at all — a body that cannot be typed is accepted silently and the
-> error surfaces at some later term that happens to ask. anoieu's `docs/notes.md` §3
+> error surfaces at some later term that happens to ask. anoieu's `anoieu_analyzer/notes.md` §3
 > records the case. This is a direct consequence of typing being on demand
 > ([chapter 8](#8-the-type-system)) rather than a decision about `define`, but
 > the effect is that `:type` is the only thing standing between a signature and
@@ -458,6 +458,13 @@ The six categories, with their surface syntax:
 | `<binary>` | `#b<0\|1>+` | `#b0`, `#b1010` |
 | `<hexadecimal>` | `#x<hex-digit>+` | `#xf`, `#x1A` |
 | `<string>` | `"<char>*"` | `"abc"`, `""` |
+
+**A quote inside a string is written twice.** `"he said ""no"""` is one string
+literal holding one pair of quotes, which is SMT-LIB 2.6's rule; the manual
+also gives `\u{d…}` and `\u d4 d3 d2 d1` for a character by hexadecimal code,
+and a backslash before anything else is an ordinary backslash. The
+configuration language `.eos` escapes the other way round and is
+[`eos.md`](eos.md) §2's; the two must not be read with one lexer.
 
 Two things follow that catch people out.
 
@@ -910,7 +917,7 @@ they are stated in six different places in the manual and enforced in none:
 > so is a `:chainable` operator whose combiner is a plain binary function. The
 > error appears later — at the first application whose type is asked for, or,
 > for the chainable case, only at four or more arguments — or does not appear at
-> all if no proof exercises the operator. anoieu's `docs/notes.md` §3 records both cases
+> all if no proof exercises the operator. anoieu's `anoieu_analyzer/notes.md` §3 records both cases
 > against a real build.
 
 > **Unsettled.** The manual writes these with a mixture of *must*, *should* and
@@ -1223,7 +1230,7 @@ constant, but not to another program.
 > **Implementation. [verified]** Because matching is first-match-wins and
 > nothing checks coverage, an unreachable case is accepted silently: there is no
 > notion of a dead case, so shadowing is well defined and invisible.
-> anoieu's `docs/notes.md` §3 records the case.
+> anoieu's `anoieu_analyzer/notes.md` §3 records the case.
 
 ### 6.2 Patterns
 
@@ -1299,7 +1306,7 @@ match it and the traversal does not descend into `A` and `B`. A program that
 >
 > A proof taking the first branch checks. A proof taking the second fails with a
 > type error. Nothing between the two says the signature was already wrong.
-> anoieu's `docs/notes.md` §3 records the case.
+> anoieu's `anoieu_analyzer/notes.md` §3 records the case.
 
 > **Unsettled.** Whether this is the language or an implementation is exactly
 > the question of what a *well-formed signature* is, and Eunoia has no such
@@ -1780,7 +1787,7 @@ Reproduced from the manual's appendix. Signature and proof files are
 
 Collected from the marks above. These are not documentation gaps; they are
 places where there is a real question and the current answer is *whatever the
-implementation does*. Several are inherited from anoieu's `docs/notes.md` §4, which
+implementation does*. Several are inherited from anoieu's `anoieu_analyzer/notes.md` §4, which
 reached them from the other direction — by trying to write checks for them.
 
 **What is a well-formed signature?** Eunoia has no such notion. Typing is on

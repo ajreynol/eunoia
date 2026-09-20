@@ -238,7 +238,7 @@ type to its attribute — expressed with *must*, *typically*, *should* and *are
 required to*, with no visible pattern to which is which. None is enforced at the
 declaration: a `:right-assoc-nil` operator over `Bool` with an `Int` nil is
 accepted, and so is a `:chainable` operator with a non-variadic combiner.
-*(Both checked against a build of `ethosEoc3`; anoieu's `docs/notes.md` §3.)*
+*(Both checked against a build of `ethosEoc3`; anoieu's `anoieu_analyzer/notes.md` §3.)*
 
 **Why it matters.** A reader cannot tell which of these a conforming checker may
 reject and which are advice. It is the largest single ambiguity found while

@@ -144,6 +144,27 @@ A file is a sequence of s-expressions.
 | native | `"z_+"` | a double-quoted name; see [The four levels](#7-the-four-levels) |
 | comment | `; ...` | to end of line |
 
+**Inside double quotes a backslash escapes the character after it**, and that
+is the only escape there is: `\\` is a backslash, `\"` is a quote, and a
+backslash before anything else is that backslash. A quote that is not escaped
+ends the token, so `"a""b"` is two of them rather than one holding a quote. The
+rule is what lets a `:lean-impl` or `:smt-impl` body hold its own string
+literals, which is most of what it is for.
+
+**This is not how `.eo` quotes a string, and the difference is not cosmetic.**
+There a doubled quote is the escape and a backslash is an ordinary character,
+following SMT-LIB 2.6. A reader that applies one language's rule to the other's
+file does not fail loudly: it ends a string early or late and goes on reading,
+so the paren depth is wrong from there to the end of the file. **A tool that
+reads both has to switch on the suffix.**
+
+*Recorded from the compiler's reader rather than from a statement of the
+language: `tools/eoc/compiler/sem_lang.py` at the baseline above, and at
+`8d8e028`, where the file is `tools/eoc/sem_lang.py`. Whether the divergence is
+deliberate is asked in the parent's
+[`docs/discussion.md`](../../../docs/discussion.md) `D1` and is not settled
+here.*
+
 A name in angle brackets, `<numeral>`, is a **native type**. Lexically it is a
 symbol like any other -- nothing here reads the brackets -- and what they say
 is the level of the place it stands in, see

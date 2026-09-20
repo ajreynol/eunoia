@@ -65,10 +65,11 @@ and anything that was not run says so — in the tutorial and in the file itself
 **A draft is a draft, not a dispatch.** Where writing an entry here turned up
 something another project might want to hear, it is written down for a person
 to send or to drop; sending it is not this project's to do. It is not
-correspondence and this project has no channel: a child project is addressed
-through the repository that carries it, and the repository that carries this
-one keeps no `docs/discussion.md` at all. Where there is no discussion file
-there is no wire, in either direction, and what is said is carried by a person.
+correspondence and this project has no channel of its own: a child project is
+addressed through the repository that carries it, opens no topic and answers
+none, so anything this project needs from another tool is asked for by
+[eunoia](../../docs/discussion.md), in eunoia's voice. Nothing there is sent
+either; a topic is a draft for a person to carry.
 
 **All three are additive.** The Eunoia [manual][manual] is the authority on the
 language, the [signature contract][contract] of [eudaimonia][eudaimonia] — the
@@ -115,9 +116,9 @@ has already done it, set down in enough detail to be imitated and argued with.
 Learning from an existing CPC rule and designing a new signature are different
 starting points; the tutorials give each its own route.
 
-The name is registered in [kanon's glossary][names], and nothing here edits it;
-a reader who finds that entry naming a different repository should read it as
-an edit that is owed.
+The name is registered in [kanon's glossary][names], and nothing here edits it.
+As of 2026-09-19 that entry names this repository as the project's parent and
+gives its charter here.
 
 ## An island
 

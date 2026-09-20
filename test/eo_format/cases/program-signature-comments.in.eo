@@ -1,0 +1,10 @@
+; A comment standing in the signature has nowhere to go in the one-line form.
+(program $literal_width ((x Int))
+  ; which width, and why it is not the type's
+  :signature
+  ; the argument, as the caller wrote it
+  (Int)
+  ; the width, never negative
+  Int
+  ((($literal_width 0) 1))
+)

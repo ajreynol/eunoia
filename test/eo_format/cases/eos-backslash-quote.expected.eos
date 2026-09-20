@@ -1,0 +1,9 @@
+; In .eos a backslash escapes the character after it, which is what lets a
+; native implementation hold its own strings.
+(define-native-method qdiv_by_zero_id
+  :lean-impl
+    "def native_qdiv_by_zero_id : native_String := (native_string_lit \"@qdiv_by_zero\")"
+)
+
+(define-native-method pair
+  :smt-impl "(declare-fun pair (vsm.Value vsm.Value) vsm.Value)")
