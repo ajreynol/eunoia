@@ -2,6 +2,12 @@
 
 Part of [Mimesis](../README.md)'s tutorials.
 
+**For additions confined to `CpcExpert.eo` and its expert includes, you do not
+need to deal with Logos yet.** The expert path here ends after step 8: no Logos
+checkout, semantics, regeneration, Lean proof, or Logos pin update is required.
+The final section applies only if you add the theory to the main `Cpc.eo`
+signature, including a later promotion from expert to main.
+
 A theory is five things: a sort, the values of that sort, the operators over it,
 the proof support that reasons about them, and a decision about whether cvc5 may
 use any of it in a safe build. This tutorial follows cvc5's finite fields — an
@@ -351,6 +357,8 @@ cvc5 --safe-mode=safe /path/to/input-using-the-theory.smt2
 **The expert path ends here.** With declarations that cvc5 agrees with, proof
 support for the rules it emits, and the safe-mode gate in place, an expert
 theory is ready for review even if its proof support is incomplete.
+There is no Logos work to do; skip the next section unless you are adding the
+theory to the main signature.
 
 ## If the theory must go to the main signature
 

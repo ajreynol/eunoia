@@ -11,17 +11,23 @@ or tooling; the tutorials describe those projects' workflows.
 
 ## Tutorials
 
-One per job. **If you are changing cvc5, start with [adding a rule to
-`Cpc.eo`](tutorials/adding-a-cpc-rule.md)** — updating and proving the rule in
-Logos is part of that job. Main CPC changes continue through Logos; expert
-additions end with their CPC declarations and checks. Worked files are kept with
-each tutorial, and every one distinguishes what was run from instructions for
-the reader's own change.
+One per job. **If you are adding a cvc5 proof rule, start with
+[adding a CPC rule](tutorials/adding-a-cpc-rule.md).**
+
+**Additions to `CpcExpert.eo` do not need Logos work yet.** Changes
+confined to `expert/CpcExpert.eo` and its expert includes need CPC declarations,
+cvc5 integration, Ethos tests, and safe-mode guards, but no Logos checkout,
+regeneration, Lean proof, or Logos pin update. Logos work is required when you
+add to the main `Cpc.eo` signature, including when you later promote an expert
+addition to main.
+
+Worked files are kept with each tutorial, and every one distinguishes what was
+run from instructions for the reader's own change.
 
 | the job | tutorial | what you work on |
 | --- | --- | --- |
-| Add a proof rule to cvc5's CPC signature | [**Adding a rule to `Cpc.eo`**](tutorials/adding-a-cpc-rule.md) | The rule's interface and its proof tests, its generated Lean and soundness proof in Logos, then the cvc5 pin and CI |
-| Add an operator to a theory CPC already has | [**Extending CPC with a new theory operator**](tutorials/extending-cpc-operators.md) | One declaration, the program that computes it, cvc5's printed name, and the Lean lemma that justifies what it computes — `int.pow2`, end to end |
+| Add a proof rule to cvc5's CPC signature | [**Adding a CPC rule**](tutorials/adding-a-cpc-rule.md) | The rule's interface, cvc5 integration, and Ethos tests; for main rules, also the Logos proof, pin, and CI |
+| Add an operator to a theory CPC already has | [**Extending CPC with a new theory operator**](tutorials/extending-cpc-operators.md) | One declaration, the program that computes it, and cvc5's printed name; for main operators, also the Logos semantics and proof — `int.pow2`, end to end |
 | Add a whole theory to CPC | [**Extending CPC theories**](tutorials/extending-cpc-theories.md) | A sort, its values and operators, the main-or-expert decision, cvc5's proof output, the safe-mode gate, and what a main theory owes Logos — cvc5's expert finite fields |
 | Define a proof calculus of your own | [**Defining a calculus: propositional resolution**](tutorials/defining-a-calculus.md) | A signature written from scratch: terms, premises, arguments, computed conclusions, side conditions, and worked proof tests |
 

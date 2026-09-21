@@ -2,7 +2,9 @@
 
 Part of [Mimesis](../README.md)'s tutorials. This is the route for writing a
 signature from scratch. To extend cvc5's existing calculus, start with
-[adding a CPC rule](adding-a-cpc-rule.md), including its verification in Logos.
+[adding a CPC rule](adding-a-cpc-rule.md). Additions confined to `CpcExpert.eo`
+and its expert includes do not need Logos work yet; additions to the main
+`Cpc.eo` signature also require verification in Logos.
 
 A Eunoia signature for propositional resolution, written one decision at a time,
 with every step run. You end with a file of about thirty lines of substance that

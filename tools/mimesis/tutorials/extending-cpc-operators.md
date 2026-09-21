@@ -2,6 +2,12 @@
 
 Part of [Mimesis](../README.md)'s tutorials.
 
+**For additions confined to `CpcExpert.eo` and its expert includes, you do not
+need to deal with Logos yet.** Follow steps 1–5, including the expert checks
+and cvc5's safe-mode guard, then stop. Steps 6–8 (Logos semantics, regeneration,
+Lean proofs, and the pin update) apply to main-signature changes, including a
+later promotion of your operator to `Cpc.eo`.
+
 The smallest complete change to cvc5's proof calculus is one new operator over
 sorts that already exist: a name, a type, a way to compute it, and a meaning.
 This tutorial follows cvc5's existing `int.pow2` through every place it is
@@ -153,14 +159,14 @@ rule fail on proofs that have nothing to do with your operator. Write the
 fall-through case first and test it.
 
 **It decides something SMT-LIB does not.** `(int.pow2 (- 3))` is `0` here,
-because this program says so. Every such convention is a claim about the operator that
-[step 7](#7-regenerate-logos-and-repair-the-proof) will ask you to prove.
+because this program says so. Every such convention for a main operator is a
+claim that [step 7](#7-regenerate-logos-and-repair-the-proof) will ask you to prove.
 
 **Evaluation is one program among several.** An operator can also need a case in
 the rewriting or normalization programs under `proofs/eo/cpc/programs/`, and
 rules of its own in `rules/<Theory>.eo`. Add the cases the rules you expect cvc5
-to emit will reach, and no others: an unreachable case is a claim you will still
-have to prove.
+to emit will reach, and no others: for a main operator, even an unreachable case
+is a claim you will still have to prove.
 
 ## 4. Check the declaration before touching cvc5
 
@@ -275,7 +281,8 @@ those proofs against `Cpc.eo` alone.
 
 **An expert operator is finished here.** `CpcExpert.eo` is not compiled into
 Logos, so there is no regeneration, Lean proof or pin update to do, and the
-declaration may land while rule support is still incomplete.
+declaration may land while rule support is still incomplete. Skip steps 6–8
+unless you are also changing the main signature or promoting the operator to it.
 
 ## 6. Give the operator a meaning in Logos
 

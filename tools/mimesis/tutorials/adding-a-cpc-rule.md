@@ -1,12 +1,23 @@
-# Adding a rule to `Cpc.eo` in cvc5
+# Adding a CPC rule in cvc5
 
 Part of [Mimesis](../README.md)'s tutorials.
 
-Adding a CPC rule means updating **both cvc5 and Logos**. In cvc5 you describe
-which proof steps the rule accepts. In Logos you regenerate that description
-into Lean and prove that those accepted steps preserve truth under its
-formalized SMT-LIB semantics. Then cvc5 pins the verified Logos revision.
-The rule is ready when those pieces agree.
+**Additions to `CpcExpert.eo` do not need Logos work yet.** Choose
+the entry point before setting up:
+
+- **Expert:** add the rule to `proofs/eo/cpc/expert/CpcExpert.eo` or an expert
+  file it includes. Follow steps 1–3 with the expert instructions, including
+  cvc5's safe-mode guard. No Logos checkout, regeneration, Lean proof, or Logos
+  pin update is needed for a change confined to the expert signature.
+- **Main:** add the rule to `proofs/eo/cpc/Cpc.eo` or a file it includes.
+  Follow all seven steps, including the Logos work.
+
+Logos compiles the main signature only. Its work becomes necessary if you
+later promote an expert rule to main, or if your change also modifies the main
+signature. For a main rule, you describe which proof steps it accepts in cvc5,
+regenerate that description into Lean in Logos, and prove that those steps
+preserve truth under its formalized SMT-LIB semantics. Then cvc5 pins the
+verified Logos revision.
 
 This is the contributor workflow introduced by [cvc5 PR #12891][pr]. It uses
 the existing `modus_ponens` rule as a small worked model, with
@@ -22,17 +33,34 @@ signature. The commands for regenerating, proving, and merging your new rule
 are a source-reviewed procedure, not a completed new rule development. Exact
 sources and validation are [recorded below](#sources-and-validation).
 
-## 1. Set up the two working trees
+## 1. Set up the working trees you need
 
-You need a cvc5 checkout containing your signature change and a Logos checkout
-for its corresponding proof. Keep the complete `proofs/eo/` subtree:
-`Cpc.eo` includes other files by relative path. You do not need to build cvc5
-to compile its signature into Logos.
+Both paths need a cvc5 checkout containing your signature change and an Ethos
+binary for proof tests. Keep the complete `proofs/eo/` subtree: the signatures
+include other files by relative path.
 
-Set these paths once, using absolute paths to your own checkouts:
+Set these paths once, using absolute paths to your checkout and checker:
 
 ```bash
 CVC5=/absolute/path/to/cvc5
+ETHOS=/absolute/path/to/ethos
+```
+
+If you need an Ethos binary, install one from cvc5:
+
+```bash
+cd "$CVC5"
+./contrib/get-ethos-checker
+ETHOS="$CVC5/deps/bin/ethos"
+```
+
+Ethos reads your edited `.eo` files directly. **For an expert rule, setup is
+complete; continue to step 2.**
+
+**Main rules only:** also use a Logos checkout for the corresponding proof.
+You do not need to build cvc5 to compile its signature into Logos.
+
+```bash
 LOGOS=/absolute/path/to/logos
 
 cd "$CVC5"
@@ -45,16 +73,8 @@ with the Logos branch on which you will develop. Use a development checkout
 for that work: the downloaded `deps/logos-checker/` is replaced when its pin
 changes.
 
-For the proof tests, use an Ethos binary, or install one from cvc5:
-
-```bash
-cd "$CVC5"
-./contrib/get-ethos-checker
-ETHOS="$CVC5/deps/bin/ethos"
-```
-
-Ethos reads your edited `.eo` files directly. Logos embeds the compiled rules;
-installing the currently pinned Logos binary does not teach it your new rule.
+Logos embeds the compiled rules; installing the currently pinned Logos binary
+does not teach it your new rule.
 The compiler setup in step 4 needs CMake, a C++17 compiler, GMP development
 headers, Python 3, tar, and wget or curl. Building the Lean proof also needs
 Lake and the version in Logos's `lean-toolchain`; see [Logos installation][install].
@@ -69,8 +89,8 @@ For an internal `ProofRule`, inspect its documentation in
 `src/proof/eo/eo_printer.cpp`. A new C++ inference also needs its own producer
 and checking support; a signature declaration alone does not make cvc5 emit it.
 
-`Cpc.eo` is the entry point, but many rules live in included theory files.
-The model here lives in `proofs/eo/cpc/rules/Booleans.eo`:
+Use the entry point you chose above; many rules live in included theory files.
+The main-signature model here lives in `proofs/eo/cpc/rules/Booleans.eo`:
 
 ```lisp
 (declare-rule modus_ponens ((F1 Bool) (F2 Bool))
@@ -86,7 +106,9 @@ recovered from the premises, so proof steps supply no `:args`.
 
 For your rule, follow neighboring declarations and their documentation comments
 (`rule`, `implements`, `premises`, `args`, `conclusion`). Put the declaration
-in the relevant included file, or add its include to `Cpc.eo`. Use `:args` for
+in the relevant included file, or add its include to `Cpc.eo` for main rules or
+`expert/CpcExpert.eo` for expert rules. Keep expert declarations and support out
+of files included by the main signature. Use `:args` for
 data the proof supplies, `:requires` for conditions the checker must enforce,
 and a program when the conclusion needs computation. A condition guaranteed
 by cvc5's current producer still belongs in the signature if soundness requires
@@ -120,8 +142,17 @@ MIMESIS=/absolute/path/to/eunoia/tools/mimesis
   "$MIMESIS/examples/cpc-rule/test/modus-ponens.cpc"
 ```
 
-That path is only for these examples. Your signature and Logos development
-use your own files and do not depend on Mimesis.
+For your own expert rule's proof, load both signatures:
+
+```bash
+"$ETHOS" --include="$CVC5/proofs/eo/cpc/Cpc.eo" \
+  --include="$CVC5/proofs/eo/cpc/expert/CpcExpert.eo" --require-proof-of-false \
+  /absolute/path/to/your-expert-rule.cpc
+```
+
+Check that a proof using your expert rule fails without the expert include.
+The `MIMESIS` path is only for these examples. Your own development uses your
+own files and does not depend on Mimesis.
 
 The expected result is `correct`. The
 [worked files](../examples/cpc-rule/README.md) also change one thing at a time:
@@ -138,8 +169,9 @@ bash "$MIMESIS/examples/cpc-rule/check.sh" \
 
 Adapt these tests to your new rule. Include boundary cases for every side
 condition, especially conditions your current producer always satisfies.
-Tests establish the behavior of the declaration on those inputs; the universal
-soundness argument is the work in Logos.
+Tests establish the behavior of the declaration on those inputs. For main
+rules, the universal soundness argument is the work in Logos; expert rules
+defer that work until promotion to main.
 
 Also produce a regression proof from your changed cvc5, with
 `--proof-format-mode=cpc --proof-granularity=dsl-rewrite --dump-proofs`.
@@ -148,6 +180,16 @@ with Ethos. The dump includes an `unsat` result and outer proof-list delimiters;
 give the checker the CPC commands inside those delimiters, as in the example
 above. For a safe-mode feature, exercise a cvc5 build configured with
 `./configure.sh safe` as well.
+
+**For an expert rule, guard the reasoning in cvc5 so it is unavailable in safe
+mode.** Moving its declaration into `expert/` does not supply that guard. Check
+both `--safe-mode=safe` and a safe build, and check their emitted proofs against
+`Cpc.eo` alone.
+
+**The expert path ends here. Skip steps 4–7.** Once the CPC declaration, cvc5
+integration, Ethos tests, and safe-mode guard are ready, the expert change can
+be reviewed without any Logos work. The remaining numbered steps apply to
+changes to the main signature.
 
 ## 4. Regenerate Logos from the edited signature
 
@@ -326,7 +368,9 @@ The [cvc5 documentation][cvc-doc] gives two explicit ways to proceed:
 - Keep the new reasoning out of safe mode; rules outside that fragment can
   live in `proofs/eo/cpc/expert/CpcExpert.eo`. Guard the reasoning in cvc5 as
   well: moving a declaration alone does not make a feature unavailable in a
-  safe build. Expert rules are outside Logos's calculus and cause parse errors.
+  safe build. This is the expert path described above: **no Logos change or
+  pin update is needed**. Logos cannot check proofs using expert rules; they
+  are outside its calculus and cause parse errors.
 - Keep the reasoning in safe mode, but explicitly exclude the rule from Logos's
   correctness coverage in `install/defs/Cpc.eos`, following its existing
   `(define-rule beta-reduce :exclude)` example. Regenerate, test that a proof
