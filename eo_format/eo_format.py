@@ -234,6 +234,10 @@ class Parser:
         return Node("list", "", children, tok.line, tok.col, tok.trailing)
 
 
+def is_include(node: Node) -> bool:
+    return bool(node.is_list() and node.children and node.children[0].is_atom("include"))
+
+
 class Formatter:
     def __init__(self, width: int, indent_style: str, indent_size: int) -> None:
         self.width = width
@@ -259,7 +263,11 @@ class Formatter:
                 ):
                     self.emit_comment(lines, nodes[idx], 0, command_start)
                     idx += 1
-                if idx < len(nodes):
+                if idx < len(nodes) and not (
+                    is_include(node)
+                    and is_include(nodes[idx])
+                    and nodes[idx].line == node.line + 1
+                ):
                     self.ensure_blank_line(lines)
         while lines and lines[-1] == "":
             lines.pop()

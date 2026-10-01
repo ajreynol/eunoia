@@ -1,0 +1,8 @@
+(include "a.eo")
+(include "b.eo")
+
+(include "c.eo")
+
+(declare-const x Int)
+
+(include "d.eo")
