@@ -697,6 +697,9 @@ class Formatter:
         return children[0].text in {"eo::define", "eo::ite"}
 
     def force_multiline(self, node: Node) -> bool:
+        # A proof rule always puts each of its attributes on its own line.
+        if self.is_call(node, "declare-rule"):
+            return True
         return (
             self.is_call(node, "eo::define")
             and len(self.non_comment_children(node)) > 2
@@ -792,7 +795,10 @@ class Formatter:
             if child_flat is None:
                 break
             maybe = line + " " + child_flat
-            if self.line_width(maybe) > self.width:
+            # The last child must leave room for the closing paren, so that
+            # it moves to its own line rather than leaving `)` alone on one.
+            closing = "" if self.has_later_child(children, idx) else ")"
+            if self.line_width(maybe + closing) > self.width:
                 break
             line = maybe
             idx += 1
@@ -814,6 +820,9 @@ class Formatter:
             idx += 1
         self.close_top_level_command(lines, children[0].text, level)
         return lines
+
+    def has_later_child(self, children: list[Node], idx: int) -> bool:
+        return any(not child.is_comment() for child in children[idx + 1 :])
 
     def close_top_level_command(
         self, lines: list[str], command: str, level: int
