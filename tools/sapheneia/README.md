@@ -15,17 +15,14 @@ how Eunoia can be explained more clearly. Start with the
 
 A documentation research project under the ecosystem's shared
 [`policy.md`](https://github.com/ajreynol/kanon/blob/main/docs/policy.md),
-which kanon maintains. Started by a human and advertised in ecosystem listings.
-It maintains documents; the compiler and semantics sets live in their own
-projects.
+which kanon maintains. Started by a human. It maintains documents; the
+compiler and semantics sets live in their own projects.
 
-**Named exceptions.** In one respect this project is **not an island**:
-eunoia's front page names and advertises it, a link inward that a reader meets
-before this page. That is the parent's choice, recorded here so that it is a
-named exception rather than drift. What has been delivered is the account, the
-two-readings comparison, the disagreement register and the feedback ledger —
-none of it carried upstream. The promotion decision is therefore open, and it
-is the human maintainer's.
+**What it delivers.** The account, the two-readings comparison, the
+disagreement register and the feedback ledger — none of it carried upstream —
+and the [`.eos` reference](docs/eos.md), which Ethos's compiler documentation
+links to as the definition of its configuration language. Sapheneia maintains
+all of them.
 
 ## The question
 
@@ -57,8 +54,8 @@ revision.
 2. **Feedback to the ethos manual.** Writing a second account of something is
    the most reliable way to find the places the first one is silent, ambiguous,
    or contradicts itself. Those go in [`docs/feedback.md`](docs/feedback.md) as a ledger,
-   and are carried upstream — if at all — by a person, under the reporting
-   discipline of the project that receives them. Nothing here is filed by
+   and are carried upstream — if at all — by a person, under the parent's
+   reporting discipline. Nothing here is filed by
    machine.
 
    **Two registers, because a silence and a disagreement are not the same
@@ -165,13 +162,14 @@ diagnostics. Individual semantics sets and compiler code remain with their
 own projects.
 
 The human maintainer assigned this responsibility on 2026-09-19. The reference
-is authoritative within that remit, an explicit exception to the usual
-additive-only role of a child project; the manual research remains a second,
+is authoritative within that remit, a role a person assigned rather than
+one the project claimed; the manual research remains a second,
 non-authoritative account. The reference was copied from Ethos's
 `tools/eoc/docs/semantics.md`; its provenance and implementation baseline are
 recorded on the page. Maintain corrections here and identify the compiler
-revision behind implementation-specific claims. There is no automatic
-synchronization with the Ethos document.
+revision behind implementation-specific claims. Ethos removed its copy in
+`4db069ff` and its compiler documentation now links here, so the copy here is
+the only one.
 
 The first maintained addition, in §2, records the compiler's string-literal
 escaping rule at a named revision. Whether that behaviour defines the language

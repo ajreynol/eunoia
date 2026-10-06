@@ -32,3 +32,8 @@ All five runs passed on 2026-09-18 with cvc5 signature revision
 `8dc85c4db8d6cc612f02dc3bb627331732605eff`, cvc5's checker pin at that revision.
 These are hand-written proof tests, not proofs emitted by a solver build. No
 cvc5 build, Logos generation or Lean proof was run for this example.
+
+Re-run on 2026-10-06 against cvc5 `64640792e6430a607cffe34f4acc361b412dc66d`,
+whose only CPC change since is documentation and program typing (`e69f77df20`),
+with Ethos built from cvc5's unchanged pin `8dc85c4d` and from Ethos main
+`30775b24b00aaf1f361e943f00b9ea124c857e35`: all five passed with both.

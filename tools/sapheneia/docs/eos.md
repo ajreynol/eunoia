@@ -13,8 +13,8 @@ repository. The original copyright and license notice is retained under
 [Source license](#source-license).
 
 **Maintenance.** This is a maintained definition, not an automatically refreshed
-mirror. The original document remains in Ethos; no automatic comparison or
-synchronization exists. When updating compiler-specific descriptions, record
+mirror. Ethos removed the original in `4db069ff`, and its compiler
+documentation links here instead; no automatic comparison exists. When updating compiler-specific descriptions, record
 the implementation revision checked. The implementation baseline for this
 import is the Ethos commit above; the import itself changes no language rules.
 

@@ -136,4 +136,11 @@ and the Logos and compiler sources at that revision's pins,
 suggestion only: whether any of it is worth a pull request, and in what form, is
 a judgement for a person who works on that documentation.
 
+Re-read on 2026-10-06 at cvc5 `64640792e6430a607cffe34f4acc361b412dc66d`:
+`docs/proofs/output_cpc.rst`, `contrib/get-ethos-checker`,
+`contrib/check-logos-compilation`, `expert/CpcExpert.eo` and
+`src/main/command_executor.h` are unchanged since the revision above, so none of
+the four additions or the smaller things is resolved upstream. The Logos pin
+there is now `c8165b2afd321ce8d4b168c270b1fb53388e16da`.
+
 [page]: https://cvc5.github.io/docs-ci/docs-main/proofs/output_cpc.html

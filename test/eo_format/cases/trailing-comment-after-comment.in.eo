@@ -1,0 +1,9 @@
+; A trailing comment written after a line whose last child already carries one.
+; The two may not be joined onto one line, which reads back as one comment.
+(define f () (g a ; inner
+) ; after the inner list
+)
+
+(define h ()
+  (k b ; inner
+  )) ; after the whole command

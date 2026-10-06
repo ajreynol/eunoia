@@ -243,8 +243,12 @@ class Formatter:
         self.width = width
         self.indent_style = indent_style
         self.indent_size = indent_size
+        self.dialect = "eo"
 
-    def format_document(self, nodes: list[Node]) -> str:
+    def format_document(self, nodes: list[Node], dialect: str = "eo") -> str:
+        # The dialect is needed to find where a laid-out line's comment starts,
+        # since that depends on how its strings are read.
+        self.dialect = dialect
         lines: list[str] = []
         idx = 0
         while idx < len(nodes):
@@ -271,6 +275,8 @@ class Formatter:
                     self.ensure_blank_line(lines)
         while lines and lines[-1] == "":
             lines.pop()
+        if not lines:
+            return ""
         return "\n".join(lines) + "\n"
 
     def ensure_blank_line(self, lines: list[str]) -> None:
@@ -330,7 +336,12 @@ class Formatter:
     ) -> None:
         if node.trailing and lines and not lines[-1].lstrip().startswith(";"):
             trailing = " " + node.text
-            if self.line_width(lines[-1] + trailing) <= self.width:
+            # A line that already ends in a comment cannot take a second one:
+            # the two would read back as a single comment.
+            if (
+                self.trailing_comment_index(lines[-1]) is None
+                and self.line_width(lines[-1] + trailing) <= self.width
+            ):
                 lines[-1] += trailing
                 return
             # It does not fit, so it goes on a line of its own above the form
@@ -990,27 +1001,17 @@ class Formatter:
             lines.append(self.indent(level) + suffix)
 
     def trailing_comment_index(self, text: str) -> Optional[int]:
-        in_string = False
-        in_symbol = False
-        i = 0
-        while i < len(text):
-            ch = text[i]
-            if in_string:
-                if ch == '"':
-                    if i + 1 < len(text) and text[i + 1] == '"':
-                        i += 2
-                        continue
-                    in_string = False
-            elif in_symbol:
-                if ch == "|":
-                    in_symbol = False
-            elif ch == '"':
-                in_string = True
-            elif ch == "|":
-                in_symbol = True
-            elif ch == ";":
-                return i
-            i += 1
+        """Where the comment on a laid-out line starts, read by the lexer the
+        file was read with, so that a `;` inside a string or an atom is never
+        taken for one."""
+        try:
+            tokens = Lexer(text, "<line>", self.dialect).tokenize()
+        except FormatError:
+            return None
+        for token in tokens:
+            if token.kind == "comment":
+                starts = [0] + [i + 1 for i, ch in enumerate(text) if ch == "\n"]
+                return starts[token.line - 1] + token.col
         return None
 
     def flat(self, node: Node) -> Optional[str]:
@@ -1124,7 +1125,9 @@ def collect_files(
         seen.add(resolved)
         if not resolved.exists():
             raise FormatError(f"{path}: file does not exist")
-        text = resolved.read_text(encoding="utf-8")
+        if not resolved.is_file():
+            raise FormatError(f"{path}: not a file")
+        text = read_source(resolved)
         this = dialect or dialect_for(resolved)
         nodes = parse_eunoia(text, str(resolved), this)
         if recursive:
@@ -1132,11 +1135,16 @@ def collect_files(
                 include_path = Path(include)
                 if not include_path.is_absolute():
                     include_path = resolved.parent / include_path
-                if include_path.exists() and should_format_include(include_path):
+                if include_path.is_file() and should_format_include(include_path):
                     visit(include_path)
                 elif not include_path.exists():
                     print(
                         f"warning: {resolved}: include does not exist: {include}",
+                        file=sys.stderr,
+                    )
+                elif not include_path.is_file():
+                    print(
+                        f"warning: {resolved}: include is not a file: {include}",
                         file=sys.stderr,
                     )
         ordered.append(resolved)
@@ -1144,6 +1152,16 @@ def collect_files(
     for path in paths:
         visit(path)
     return ordered
+
+
+def read_source(path: Path) -> str:
+    """A file's text, or a `FormatError` saying why there is none."""
+    try:
+        return path.read_text(encoding="utf-8")
+    except UnicodeDecodeError as err:
+        raise FormatError(f"{path}: not UTF-8: {err}") from err
+    except OSError as err:
+        raise FormatError(f"{path}: {err.strerror or err}") from err
 
 
 def code_tokens(text: str, name: str, dialect: str) -> list[tuple[str, str]]:
@@ -1208,8 +1226,17 @@ def format_text(
     says the same thing as running it once.  `--check` is only worth having if
     a file it has just written passes it."""
     current = text
-    for _ in range(SETTLE_PASSES):
-        nxt = formatter.format_document(parse_eunoia(current, name, dialect))
+    for attempt in range(SETTLE_PASSES):
+        try:
+            nodes = parse_eunoia(current, name, dialect)
+        except FormatError as err:
+            if attempt == 0:
+                raise
+            # The file read; it is the formatter's own text that does not.
+            raise FormatError(
+                f"{name}: internal error, the formatted text does not parse: {err}"
+            ) from err
+        nxt = formatter.format_document(nodes, dialect)
         if nxt == current:
             verify_reformat(text, current, name, dialect)
             return current
@@ -1223,9 +1250,12 @@ def format_text(
 def format_file(
     path: Path, formatter: Formatter, dialect: Optional[str] = None
 ) -> tuple[str, str]:
-    original = path.read_text(encoding="utf-8")
+    original = read_source(path)
     this = dialect or dialect_for(path)
-    return original, format_text(original, str(path), formatter, this)
+    try:
+        return original, format_text(original, str(path), formatter, this)
+    except RecursionError as err:
+        raise FormatError(f"{path}: nested too deeply to read") from err
 
 
 def unified_diff(path: Path, original: str, formatted: str) -> str:
@@ -1239,13 +1269,20 @@ def unified_diff(path: Path, original: str, formatted: str) -> str:
     )
 
 
+def positive_int(text: str) -> int:
+    value = int(text)
+    if value < 1:
+        raise argparse.ArgumentTypeError(f"must be at least 1: {text}")
+    return value
+
+
 def main(argv: Optional[list[str]] = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("files", nargs="+", type=Path)
-    parser.add_argument("--width", type=int, default=80)
+    parser.add_argument("--width", type=positive_int, default=80)
     parser.add_argument(
         "--indent-size",
-        type=int,
+        type=positive_int,
         default=2,
         help="number of spaces per indentation level",
     )
@@ -1278,11 +1315,15 @@ def main(argv: Optional[list[str]] = None) -> int:
     dialect = None if args.dialect == "auto" else args.dialect
     try:
         files = collect_files(args.files, args.recursive, dialect)
-        changed: list[Path] = []
+        # Every file is formatted before any is written, so a file the
+        # formatter refuses leaves the others as they were too.
+        results: list[tuple[Path, str, str]] = []
         for path in files:
             original, formatted = format_file(path, formatter, dialect)
-            if original == formatted:
-                continue
+            if original != formatted:
+                results.append((path, original, formatted))
+        changed: list[Path] = []
+        for path, original, formatted in results:
             changed.append(path)
             if args.diff:
                 print(unified_diff(path, original, formatted), end="")
@@ -1295,6 +1336,9 @@ def main(argv: Optional[list[str]] = None) -> int:
             for path in changed:
                 print(f"reformatted {path}")
         return 1 if (args.check and changed) else 0
+    except RecursionError:
+        print("eofmt: a file is nested too deeply to read", file=sys.stderr)
+        return 2
     except FormatError as err:
         print(f"eofmt: {err}", file=sys.stderr)
         return 2

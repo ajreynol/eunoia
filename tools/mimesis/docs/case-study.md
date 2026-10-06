@@ -365,7 +365,7 @@ Concrete, and to be carried into the route rather than admired:
    and the proof lines it takes with it.
 3. **The route warns about matching style at the point of choosing**, since the
    cost lands two days later in somebody else's file.
-4. **A candidate mechanism for goal 5**: a lint over a compiled signature that
+4. **A candidate mechanism**: a lint over a compiled signature that
    reports, per program, its case count and its right-hand-side validations —
    the two quantities that became matcher lemmas here. It would have given the
    author of movement 2 the number that only arrived in movement 5.

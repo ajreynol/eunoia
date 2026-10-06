@@ -140,6 +140,67 @@ def refusal_cases(fail: Failures) -> None:
             fail.check(False, f"{bad!r} is refused")
 
 
+def cli_cases(fail: Failures) -> None:
+    """Exit 1 means `--check` found something to change, so nothing else may
+    exit 1: a file that cannot be read is exit 2 with a message, not a
+    traceback.  Everything here is written to a temporary directory."""
+    import contextlib
+    import io
+    import tempfile
+
+    def run(*argv: str) -> int:
+        with contextlib.redirect_stderr(io.StringIO()), contextlib.redirect_stdout(
+            io.StringIO()
+        ):
+            try:
+                return F.main(list(argv))
+            except SystemExit as exit:
+                return int(exit.code or 0)
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = Path(tmp)
+        (root / "dir").mkdir()
+        (root / "bad.eo").write_bytes(b"\xff(a)\n")
+        (root / "deep.eo").write_text("(" * 5000 + ")" * 5000 + "\n")
+        (root / "ok.eo").write_text("(a)\n")
+        (root / "loose.eo").write_text("(a  b)\n")
+        (root / "inc.eo").write_text('(include "dir")\n\n(a)\n')
+        fail.check(run("--check", str(root / "ok.eo")) == 0, "cli: --check, no change, exits 0")
+        fail.check(run("--check", str(root / "loose.eo")) == 1, "cli: --check, a change, exits 1")
+        fail.check(run("--check", str(root / "nope.eo")) == 2, "cli: a missing file exits 2")
+        fail.check(run("--check", str(root / "dir")) == 2, "cli: a directory exits 2")
+        fail.check(run("--check", str(root / "bad.eo")) == 2, "cli: a non-UTF-8 file exits 2")
+        fail.check(run("--check", str(root / "deep.eo")) == 2, "cli: deep nesting exits 2")
+        fail.check(
+            run("--check", str(root / "inc.eo")) == 0,
+            "cli: an include naming a directory is skipped",
+        )
+        fail.check(
+            run("--width", "0", "--check", str(root / "ok.eo")) == 2
+            and run("--indent-size", "0", "--check", str(root / "ok.eo")) == 2,
+            "cli: a width or indent below 1 is refused",
+        )
+        # The safety net refusing the second file must leave the first as it
+        # was, so the refusal is forced on it here.
+        verify = F.verify_reformat
+
+        def refuse_late(original: str, formatted: str, name: str, dialect: str) -> None:
+            if name.endswith("late.eo"):
+                raise F.FormatError(f"{name}: refused")
+            verify(original, formatted, name, dialect)
+
+        (root / "late.eo").write_text("(c  d)\n")
+        F.verify_reformat = refuse_late
+        try:
+            code = run(str(root / "loose.eo"), str(root / "late.eo"))
+        finally:
+            F.verify_reformat = verify
+        fail.check(
+            code == 2 and (root / "loose.eo").read_text() == "(a  b)\n",
+            "cli: nothing is written when any file is refused",
+        )
+
+
 def diff(expected: str, got: str) -> str:
     import difflib
 
@@ -158,6 +219,7 @@ def main() -> int:
     dialect_cases(fail)
     golden_cases(fail)
     refusal_cases(fail)
+    cli_cases(fail)
     print()
     if fail.count:
         print(f"-- eo_format: {fail.count} failure(s)")

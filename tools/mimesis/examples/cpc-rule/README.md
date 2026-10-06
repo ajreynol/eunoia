@@ -28,5 +28,9 @@ Ethos binary used had SHA-256
 `6eb2bd6bac717fea9f0902ea1d5cccfd9e0ee4732bad984fcddf3e1c4abab81c`;
 it was an existing build, not a fresh build of cvc5's Ethos pin. These are
 Ethos tests; no Logos regeneration or Lean build was run for this example.
+Re-run on 2026-10-06 against cvc5 `64640792e6430a607cffe34f4acc361b412dc66d`,
+whose only CPC change since is documentation and program typing (`e69f77df20`),
+with Ethos built from cvc5's unchanged pin `8dc85c4d` and from Ethos main
+`30775b24b00aaf1f361e943f00b9ea124c857e35`: all five passed with both.
 See the tutorial's
 [validation record](../../tutorials/adding-a-cpc-rule.md#sources-and-validation).

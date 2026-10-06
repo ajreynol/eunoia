@@ -40,7 +40,7 @@ corresponding programs.
 | [MD-10](#md-10) | *The :type attribute for definitions* | types are compared "identical" after an evaluation the sentence does not mention | incomplete |
 
 **Read against** `user_manual.md` on `ethosEoc3` at `4d1ba77c`. Every *run* claim
-was checked against `eo/ethos/build-eoc/ethos-eoc`, built from that commit; the
+was checked against an `ethos-eoc` build of that commit; the
 probe is at the [end](#how-to-re-check).
 
 ---
@@ -513,7 +513,7 @@ accepts, the file itself is the probe and the exit status is the answer. Widths
 are read with `(eo::len t)`.
 
 Built from `ethosEoc3` at `4d1ba77c`:
-`eo/ethos/build-eoc/ethos-eoc` is an ethos binary carrying the compiler plugins
+`ethos-eoc` is an ethos binary carrying the compiler plugins
 and behaves as the ordinary checker when no `--plugin` is passed.
 
 ## Status

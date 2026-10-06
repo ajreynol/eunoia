@@ -35,3 +35,8 @@ All six runs passed on 2026-09-18 with cvc5 signature revision
 These are hand-written proof tests, not proofs emitted by a solver build. No
 Logos generation or Lean proof was run for this example, and the finite-field
 theory is not part of Logos's main-signature compilation.
+
+Re-run on 2026-10-06 against cvc5 `64640792e6430a607cffe34f4acc361b412dc66d`,
+whose only CPC change since is documentation and program typing (`e69f77df20`),
+with Ethos built from cvc5's unchanged pin `8dc85c4d` and from Ethos main
+`30775b24b00aaf1f361e943f00b9ea124c857e35`: all six passed with both.

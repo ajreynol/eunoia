@@ -51,7 +51,9 @@ accident is [`docs/discussion.md`](docs/discussion.md) `D1`.
 **It refuses rather than guesses.** Rewriting a file in place destroys the only
 copy of anything it drops, so every result is read back and compared with the
 file it came from: same code tokens, same comment words in the same order. A
-mismatch is reported as the formatter's defect and nothing is written. Layout
+mismatch is reported as the formatter's defect and nothing is written — not
+that file and not any other in the same run, since every file is formatted
+before the first is written. Layout
 also runs to a fixed point, so a file it has just written passes `--check`.
 
 **What it is not.** There is no Eunoia formatter standard and this does not
@@ -63,14 +65,16 @@ decides that. Its comment rules are the weakest part: a comment written after a
 form that will not fit beside it is moved onto a line of its own above that
 form, which is a judgement about where the comment belongs.
 
-**Measured 2026-09-19** with `test/corpus.py` over every `.eo` and `.eos` file
-in four checkouts — ethos `8d8e028`, cvc5 `dbf176d`'s `proofs/`, eudaimonia
-`b465b9d`, and the two logos `c8165b2` does not vendor from ethos —
-**297 files, none refused and none unsettled**. The same corpus before the same
-day's fixes: two files refused outright, 26 whose comment text the formatter
-dropped, one whose comments it reordered, and three that changed again on a
-second run. Nothing was written to any of those trees, and logos's vendored
-copy of ethos was read as well, to the same result and on the same files.
+**Measured 2026-10-06** with `test/corpus.py` over every `.eo` and `.eos` file
+in four checkouts — ethos `30775b2`, cvc5 `553db22`'s `proofs/`, eudaimonia
+`1abe181`, and the two logos `521d559` does not vendor from ethos —
+**295 files, none refused and none unsettled**, and none at widths from 30 to
+120. anoieu `cde5672` (572 files) and dokimasia `6c4a512` (51) read the same.
+The corpus no longer finds anything, so the same day a run that inserts
+comments at random token boundaries was added to the reading, and it found a
+comment written after a closing paren merged into one already on that line;
+that and a `;` inside a `.eos` string are the cases fixed since. Nothing was
+written to any of those trees.
 
 ## What is here, and what is not
 
@@ -91,7 +95,8 @@ disagreement goes into a ledger rather than into a correction of the manual.
 [`Eunoia semantics` reference](tools/sapheneia/docs/eos.md) is the authoritative
 definition maintained here for those configuration files. It was copied from
 Ethos's Eunoia compiler documentation on 2026-09-19, with its source revision
-recorded. Corrections and future definition updates belong there; the compiler
+recorded; ethos has since removed its copy and links here, as of ethos
+`30775b2`. Corrections and future definition updates belong there; the compiler
 implementation and individual semantics sets remain with their own projects.
 
 **The `.eo` account does not propose language changes.** Where Eunoia is
@@ -121,8 +126,9 @@ tools/mimesis/examples/resolution/check.sh path/to/ethos
 
 `test/run.py` is what runs on every push, and green means the formatter
 produced every expected output in `test/eo_format/cases` and that each one kept
-the tokens and comments of the file it came from. It reads nothing under
-`tools/`: the projects there are islands, and a suite that opened one of their
+the tokens and comments of the file it came from, and that its command line
+exits as documented and writes nothing when any file in a run is refused. It
+reads nothing under `tools/`: the projects there keep to themselves, and a suite that opened one of their
 signatures would make deleting a project change what this says. `test/corpus.py`
 takes the measurement on [the formatter](#the-formatter) again, against trees
 that are not in this repository and so cannot be in CI.
@@ -156,8 +162,9 @@ to the document that governs.
 
 This tree is arranged by the Eunoia ecosystem's shared policy, which
 [kanon][kanon] maintains in [`docs/policy.md`][policy]: one front page, every
-document indexed, each project under `tools/` an island that reads what it likes
-and writes only inside itself. kanon's [`docs/glossary.md`][glossary] is the
+document indexed, each project under `tools/` a child with its own charter. The
+policy makes a child's isolation optional; both here keep it, reading what they
+like and writing only inside themselves. kanon's [`docs/glossary.md`][glossary] is the
 authoritative register of the ecosystem's names, including the ones used here.
 
 ## Status
@@ -167,13 +174,13 @@ its own history and keeps its own status section; read those rather than this
 one for what has been checked and against which commits.
 
 **The formatter is the newest thing here and the least exercised.** Its layout
-rules have been read against 297 files and its own cases, and by nobody who
+rules have been read against 295 files and its own cases, and by nobody who
 writes Eunoia for a living. It has no consumer outside this tree: nothing
 elsewhere runs it, no repository has been asked to, and the honest statement of
 what it is for today is that it made the two languages' difference visible
 enough to ask about.
 
-**The name register is kanon's.** As of 2026-09-19 its
+**The name register is kanon's.** As of 2026-10-06 its
 [glossary][glossary] entries for both projects name this repository as their
 parent and give their charters here. Editing the register is kanon's and
 nothing here does it.
@@ -187,7 +194,7 @@ repository policy, kept by [kanon](https://github.com/ajreynol/kanon) in
 **Human maintainers:** [the current list in policy.md](https://github.com/ajreynol/kanon/blob/main/docs/policy.md#human-maintainers).
 
 **The checker runs here on every push**, as `anoieu / policy`. This repository
-names a policy contract rather than pinning a checker commit, so what is held
+names policy contract `1` rather than pinning a checker commit, so what is held
 still is the obligations and not the implementation: a build here can turn red
 with nothing committed, and when it does, a violation already in this tree has
 started being reported.

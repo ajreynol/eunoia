@@ -21,8 +21,13 @@ regeneration, Lean proof, or Logos pin update. Logos work is required when you
 add to the main `Cpc.eo` signature, including when you later promote an expert
 addition to main.
 
-Worked files are kept with each tutorial, and every one distinguishes what was
-run from instructions for the reader's own change.
+Worked files are kept with each tutorial, under `examples/`:
+[`cpc-rule`](examples/cpc-rule/README.md),
+[`cpc-operator`](examples/cpc-operator/README.md),
+[`cpc-theory`](examples/cpc-theory/README.md) and
+[`resolution`](examples/resolution/README.md), each with a script that re-runs
+its proof tests. Every tutorial distinguishes what was run from instructions for
+the reader's own change.
 
 | the job | tutorial | what you work on |
 | --- | --- | --- |
@@ -123,7 +128,7 @@ Learning from an existing CPC rule and designing a new signature are different
 starting points; the tutorials give each its own route.
 
 The name is registered in [kanon's glossary][names], and nothing here edits it.
-As of 2026-09-19 that entry names this repository as the project's parent and
+As of 2026-10-06 that entry names this repository as the project's parent and
 gives its charter here.
 
 ## An island

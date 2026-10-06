@@ -238,7 +238,8 @@ Error: wrong-value.cpc:4.66: Unexpected conclusion for rule evaluate:
 the labels are the opposite way round from what the words suggest, as the
 [calculus tutorial](defining-a-calculus.md#4-the-same-distinction-on-the-way-out)
 also notes. Both terms are printed desugared, which is why `(= a b)` appears as
-`(_ (= a) b)`.
+`(_ (= a) b)`. That is the output of cvc5's Ethos pin; as of 2026-10-06, Ethos
+main (`30775b24`) prints the inner application too, as `(_ (_ = a) b)`.
 
 One failure has no message at all: an operator with **no** evaluation case still
 type checks, and `evaluate` then proves `(= t t)` for it, silently. The

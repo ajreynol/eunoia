@@ -78,3 +78,14 @@ argue with later.
 **We are not asking you to change either reader, and a *no* costs us nothing:**
 the page stays as it is, with the rule recorded as the compiler's behaviour at
 a revision rather than as the language.
+
+**Added 2026-10-06, at ethos `30775b2` — something on your side that bears on
+this, recorded so nobody answers the question twice.** The reader moved to
+`tools/eoc/compiler/sem_lang.py` in `4db069f`, and the same commit added
+`escape_eo` to `tools/eoc/compiler/sem_compile.py`, whose docstring states the
+difference with a reason: a set writes `\"` *since a set holds the Lean an
+implementation is written as*, Eunoia writes `""` as SMT-LIB does, and nothing
+else differs. That reads like a decision rather than an accident. We have not
+treated a docstring as your answer, so the question stands narrowed: **is that
+docstring the language's position?** A *yes* settles this, and the reference
+will cite it.

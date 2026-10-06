@@ -9,7 +9,9 @@ jobs:
   eo_format:
     # Green means: the formatter produced every expected output in
     # test/eo_format/cases, and every one of them kept the code tokens and the
-    # comments of the file it came from and did not change on a second pass.
+    # comments of the file it came from and did not change on a second pass,
+    # and the command line exited as documented and wrote nothing when any file
+    # in a run was refused.
     # It says nothing about the corpus in other repositories, which
     # test/corpus.py measures and CI cannot reach.
     runs-on: ubuntu-latest

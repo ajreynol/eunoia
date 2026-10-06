@@ -11,7 +11,7 @@ be a defect in our reading rather than in the manual.
 Under the ecosystem's shared
 [`policy.md`](https://github.com/ajreynol/kanon/blob/main/docs/policy.md),
 anything that leaves this directory does so in the hands of a person who can
-answer the follow-up, under the receiving project's own reporting discipline,
+answer the follow-up, under the parent's ordinary reporting discipline,
 and only once confirmed. Nothing leaves by machine. A row here is a
 *candidate*: stated under our own name with the evidence it has, and explicitly
 unjudged until somebody who knows the language rules on it.

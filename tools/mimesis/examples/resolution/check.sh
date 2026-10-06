@@ -11,13 +11,20 @@
 # Rejection is how three of these tests pass, and `ethos` reaches it by
 # aborting, so two things have to be arranged or a passing run looks broken.
 # `ulimit -c 0` stops the aborts leaving core files behind. Running into a file
-# rather than into `$(...)` stops the shell announcing each one: a command
-# substitution whose child dies on a signal is reported as `Aborted (core
-# dumped)` by some shells, on this script's own stderr, interleaved with the
-# `ok` lines.
+# from inside a `{ ...; }` group, rather than into `$(...)` or as a bare
+# command, stops the shell announcing each one: a child that dies on a signal
+# is reported as `Aborted (core dumped)` by some shells (bash among them), on
+# whatever stderr is in force, and the group's redirection is what keeps that
+# out of this script's own stderr, interleaved with the `ok` lines.
 set -e
 ulimit -c 0
 ETHOS=${1:-ethos}
+# A missing binary also exits nonzero, which the three rejection tests would
+# read as passing; so it is refused here rather than counted.
+if ! command -v "$ETHOS" > /dev/null 2>&1; then
+  echo "check.sh: no ethos at '$ETHOS'" >&2
+  exit 2
+fi
 here=$(dirname "$0")
 status=0
 log=$(mktemp "${TMPDIR:-/tmp}/resolution-check.XXXXXX")
@@ -28,7 +35,7 @@ for sig in "$here"/Resolution.eo "$here"/Resolution-lists.eo; do
   for proof in "$here"/test/*.proof; do
     name=$(basename "$proof" .proof)
     want=$(cat "$here/test/$name.expected")
-    if "$ETHOS" --include="$sig" "$proof" > "$log" 2>&1; then
+    if { "$ETHOS" --include="$sig" "$proof"; } > "$log" 2>&1; then
       got=$(tail -n 1 "$log")
     else
       got=rejected

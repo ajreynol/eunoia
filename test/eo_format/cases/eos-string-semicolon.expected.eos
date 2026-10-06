@@ -1,0 +1,4 @@
+; A `;` inside an .eos string that holds an escaped quote is not a comment, so
+; the closing paren goes after the string and not inside it.
+(define-native-method some_method_with_a_long_name
+  :lean-impl "def native_with_a_long_name := \" ; not a comment")

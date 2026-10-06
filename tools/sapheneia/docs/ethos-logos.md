@@ -324,8 +324,9 @@ The stage also may not call `eo::typeof` itself, which is the root cause behind
 
 **Settled?** No. The manual describes `eo::typeof` on values; what the type of a
 partial application is, and whether a checker owes an answer, is not written
-down. `docs/README.md` §11 in the ethos tree states the approximation in the
-compiler's own words.
+down. `docs/README.md` §11 in the ethos tree at `4d1ba77c` states the
+approximation in the compiler's own words; at ethos `30775b24` it is in
+`tools/eoc/docs/design.md`, *Non-ground nil predicates*.
 
 ### EL-07
 
@@ -372,8 +373,8 @@ Nothing compares the stage's decision to forward-declare with the human's
 decision to define. Forget the attribute and an undefined program reaches the
 backend; write it wrong and the compiled artifact's list semantics silently
 disagree with what ethos does when checking a proof. The ethos tree's own
-`docs/README.md` §10 works this through in full and calls it the worst thing in
-the compiler; three of its five symptoms have since been fixed and **this one
+`docs/README.md` §10 at `4d1ba77c` works this through in full and calls it the
+worst thing in the compiler; three of its five symptoms have since been fixed and **this one
 has not**.
 
 Ten attributes across nine symbols in the development set today, and one more
@@ -516,10 +517,11 @@ are answering a question nobody asked them.
 
 **logos's package is compiled by an ethos the ethos tree has moved past.**
 
-logos pins the compiler by commit — `ETHOS_VERSION="406b5499…"`, the head of
-`ethosEoc3` when the pin was last advanced — so what the compiler emits changes
-only on purpose. The pin is 11 commits behind the local `ethosEoc3` checkout as
-this was written.
+logos pins the compiler by commit — at logos `be479120`,
+`ETHOS_VERSION="406b5499…"`, the head of `ethosEoc3` when the pin was last
+advanced — so what the compiler emits changes only on purpose. The pin was 11
+commits behind the local `ethosEoc3` checkout as this was written. At logos
+`main` (`a1871ba2`) the pin is ethos `30775b24`, on ethos `main`.
 
 That is the right design and it has a consequence worth stating: **a divergence
 read off the current ethos tree is not necessarily a divergence in the Lean
@@ -568,8 +570,8 @@ divergence would overstate the ledger.
 
 - **It does not say which side is right**, even where the manual does. Where the
   manual settles a row, the row says which reading the manual states; carrying
-  that anywhere is a person's job, under the reporting discipline of the project
-  that receives it, and nothing here has been carried anywhere.
+  that anywhere is a person's job, under the parent's reporting discipline, and
+  nothing here has been carried anywhere.
 - **It does not describe `.eos`.** The semantics-set language has its own
   [reference maintained by Sapheneia](eos.md). Rows cite a set where the set is
   the evidence; the language definition belongs in that reference, separately
@@ -623,11 +625,11 @@ form of the same probe put the answer in a bit-vector width directly —
 `(declare-const c (BitVec (eo::ite <Q> 1 2)))` applied to `(-> (BitVec 1) Bool)`
 — which works and is longer.
 
-**The builds used.** `eo/ethos/build-eoc/ethos-eoc` is an ethos binary with the
+**The builds used.** An `ethos-eoc` build is an ethos binary with the
 compiler plugins and behaves as the ordinary checker when no `--plugin` is
 passed; it was used for every *run* row above. Every such row was also
 reproduced against an independent build of a different commit
-(`ethos-ai/build/src/ethos` at `292201c2`, branch `anoieu-findings`) and agreed.
+(ethos `292201c2`, branch `anoieu-findings`) and agreed.
 
 **What has not been run at all: logos.** Every logos-side claim here is read off
 generated Lean, which is the text Lean compiles, so it is strong evidence — but
